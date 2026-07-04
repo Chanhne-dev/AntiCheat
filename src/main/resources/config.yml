@@ -1,0 +1,133 @@
+# ==========================================
+#     AntiCheat - Cấu hình chính
+#     Tương thích: Minecraft 1.21.x (Paper/Spigot)
+# ==========================================
+
+settings:
+    # Tần suất quét inventory (đơn vị: tick, 20 tick = 1 giây)
+    scan-interval: 40
+    # Thời gian ban (phút)
+    ban-duration-minutes: 1
+    # Ghi log ra console
+    log-to-console: true
+    # Thông báo cho admin khi phát hiện item bất hợp pháp
+    notify-admins: true
+
+discord:
+  enabled: true
+  webhook: "https://discord.com/api/webhooks/xxxxx"
+
+# ==========================================
+# DANH SÁCH ITEM BỊ CẤM HOÀN TOÀN
+# ==========================================
+banned-items:
+    - SPAWNER_EGG                # Tất cả spawn egg (dùng endsWith)
+    - COMMAND_BLOCK
+    - BARRIER
+    - BEDROCK
+    - STRUCTURE_BLOCK
+    - END_PORTAL_FRAME
+    - CHAIN_COMMAND_BLOCK
+    - REPEATING_COMMAND_BLOCK
+    - TRIAL_SPAWNER
+    - KNOWLEDGE_BOOK
+    - BUDDING_AMETHYST
+    - STRUCTURE_VOID
+    - LIGHT
+    - DEBUG_STICK
+    - JIGSAW
+    - PETRIFIED_OAK_SLAB
+    - INFESTED_STONE
+    - INFESTED_COBBLESTONE
+    - INFESTED_STONE_BRICKS
+    - INFESTED_MOSSY_STONE_BRICKS
+    - INFESTED_CRACKED_STONE_BRICKS
+    - INFESTED_CHISELED_STONE_BRICKS
+
+# ==========================================
+# GIỚI HẠN CẤP ĐỘ ENCHANTMENT (level tối đa cho phép)
+# ==========================================
+max-enchant-levels:
+    # Bảo vệ
+    PROTECTION: 4
+    FIRE_PROTECTION: 4
+    BLAST_PROTECTION: 4
+    PROJECTILE_PROTECTION: 4
+    FEATHER_FALLING: 4
+    # Vũ khí
+    SHARPNESS: 5
+    SMITE: 5
+    BANE_OF_ARTHROPODS: 5
+    KNOCKBACK: 2
+    FIRE_ASPECT: 2
+    LOOTING: 3
+    SWEEPING_EDGE: 3
+    # Công cụ
+    EFFICIENCY: 5
+    SILK_TOUCH: 1
+    FORTUNE: 3
+    # Cung
+    POWER: 5
+    PUNCH: 2
+    FLAME: 1
+    INFINITY: 1
+    # Câu cá
+    LUCK_OF_THE_SEA: 3
+    LURE: 3
+    # Khác
+    UNBREAKING: 3
+    MENDING: 1
+    THORNS: 3
+    DEPTH_STRIDER: 3
+    FROST_WALKER: 2
+    BINDING_CURSE: 1
+    VANISHING_CURSE: 1
+    SOUL_SPEED: 3
+    SWIFT_SNEAK: 3
+    WIND_BURST: 3
+    DENSITY: 5
+    BREACH: 4
+    CHANNELING: 1
+    IMPALING: 5
+    LOYALTY: 3
+    RIPTIDE: 3
+    MULTISHOT: 1
+    PIERCING: 4
+    QUICK_CHARGE: 3
+
+# ==========================================
+# GIỚI HẠN CẤP ĐỘ THUỐC (Potion Effects)
+# ==========================================
+max-potion-levels:
+    # Level tối đa cho phép (level II = 1 trong API, level III = 2...)
+    # 1 = Level I, 2 = Level II (amplifier 0 = lvl1, amplifier 1 = lvl2)
+    max-amplifier: 1     # Cho phép tối đa Level II (amplifier 1)
+
+# ==========================================
+# ITEM KHÔNG HỢP LỆ VỀ ENCHANTMENT
+# (Các item không thể enchant trong vanilla nhưng bị exploit)
+# ==========================================
+invalid-enchant-items:
+    # Khối tự nhiên không thể có enchant
+    - GRASS_BLOCK
+    - DIRT
+    - SAND
+    - GRAVEL
+    - STONE
+    - COBBLESTONE
+    - WOOD
+    - OAK_LOG
+    - BIRCH_LOG
+    - SPRUCE_LOG
+    - JUNGLE_LOG
+    - ACACIA_LOG
+    - DARK_OAK_LOG
+    - GLASS
+    - GLASS_PANE
+    - LEAVES
+    - OAK_LEAVES
+    - BIRCH_LEAVES
+    - SPRUCE_LEAVES
+    - JUNGLE_LEAVES
+    - ACACIA_LEAVES
+    - DARK_OAK_LEAVES

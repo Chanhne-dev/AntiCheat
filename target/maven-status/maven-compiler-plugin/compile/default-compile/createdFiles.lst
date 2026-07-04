@@ -1,0 +1,14 @@
+chanhne\AntiCheat\enforcement\EnforcementHandler$1.class
+chanhne\AntiCheat\check\ItemChecker.class
+chanhne\AntiCheat\check\ViolationResult.class
+chanhne\AntiCheat\check\CommandChecker.class
+chanhne\AntiCheat\check\ViolationType.class
+chanhne\AntiCheat\enforcement\EnforcementHandler.class
+chanhne\AntiCheat\task\ScanTask.class
+chanhne\AntiCheat\messages\Message.class
+chanhne\AntiCheat\AntiCheatPlugin.class
+chanhne\AntiCheat\discord\DiscordWebhook.class
+chanhne\AntiCheat\config\ConfigManager.class
+chanhne\AntiCheat\util\ColorUtil.class
+chanhne\AntiCheat\command\CommandHandler.class
+chanhne\AntiCheat\listener\PlayerInventoryListener.class

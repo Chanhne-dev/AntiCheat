@@ -1,0 +1,17 @@
+name: AntiCheat
+version: 1.1.0
+main: chanhne.AntiCheat.AntiCheatPlugin
+api-version: '1.21'
+description: Tự động phát hiện và xóa các item bất hợp pháp trong Minecraft
+author: Chanhne
+commands:
+  illegal:
+    description: Lệnh quản lý AntiCheat
+    aliases: [ill]
+    usage: /<command> <check|reload> [player]
+    permission: anticheat.admin
+
+permissions:
+  anticheat.admin:
+    description: Quyền quản trị plugin
+    default: op
