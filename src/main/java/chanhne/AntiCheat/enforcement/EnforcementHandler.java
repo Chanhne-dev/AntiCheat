@@ -7,14 +7,10 @@ import chanhne.AntiCheat.AntiCheatPlugin;
 import chanhne.AntiCheat.check.ViolationResult;
 import chanhne.AntiCheat.config.ConfigManager;
 import chanhne.AntiCheat.messages.Message;
+import chanhne.offplugin.api.ChanhOffAPI;
+import chanhne.offplugin.api.ChanhOffAPIProvider;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
-import io.papermc.paper.ban.BanListType;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 
 public class EnforcementHandler {
@@ -39,24 +35,6 @@ public class EnforcementHandler {
 
         ConfigManager cfg = plugin.getConfigManager();
 
-        // 1. Thông báo cho player về từng vi phạm
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
-            plugin.getDiscordWebhook().send(
-                "🚨 Anti Cheat Ban",
-                """
-                **Player:** %s
-                **UUID:** %s
-                **Reason:** Illegal Item
-                **Duration:** %d minute(s)
-                """
-                .formatted(
-                    player.getName(),
-                    player.getUniqueId(),
-                    cfg.getBanDurationMinutes()
-                ),
-                0xFF0000
-            )
-        );
         for (ViolationResult violation : violations) {
             String message = buildViolationMessage(violation, cfg);
             player.sendMessage(message);
@@ -94,7 +72,11 @@ public class EnforcementHandler {
         }
 
         // 5. Ban player
-        banPlayer(player, cfg.getBanDurationMinutes());
+        ChanhOffAPI api = ChanhOffAPIProvider.get();
+
+        if (api != null) {
+            api.banPlayer(player.getUniqueId(), player.getName(), "IllegalItem", "AntiCheat");
+        }
     }
 
     /**
@@ -109,37 +91,6 @@ public class EnforcementHandler {
         player.getInventory().setArmorContents(null);
         player.getInventory().setItemInOffHand(null);
         player.updateInventory();
-    }
-
-    /**
-     * Ban player trong một khoảng thời gian
-     */
-    private void banPlayer(Player player, int minutes) {
-        ConfigManager cfg = plugin.getConfigManager();
-        Date expiry = Date.from(Instant.now().plus(Duration.ofMinutes(minutes)));
-
-        Bukkit.getBanList(BanListType.PROFILE).addBan(
-            player.getName(),
-            "§cItem bất hợp pháp! Ban " + minutes + " phút.",
-            expiry,
-            "Anti Cheat"
-        );
-
-        // Kick player với thông báo
-        String kickMsg = Message.get("ban.player-banned","player", player.getName(),"duration", String.valueOf(minutes));
-        player.kick(LegacyComponentSerializer.legacyAmpersand().deserialize(kickMsg));
-
-        // 2. 📢 Broadcast toàn server
-        Component broadcast = Message.component("ban.player-banned-broadcast",
-            "player", player.getName());
-        Bukkit.broadcast(broadcast);
-
-        // Kick phải chạy trên main thread
-        Bukkit.getScheduler().runTask(plugin, () -> player.kick(Component.text(kickMsg)));
-
-        if (cfg.isLogToConsole()) {
-            plugin.getLogger().warning("BAN: " + player.getName() + " bị ban " + minutes + " phút do item bất hợp pháp.");
-        }
     }
 
     /**

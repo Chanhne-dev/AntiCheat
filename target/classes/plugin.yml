@@ -1,14 +1,17 @@
 name: AntiCheat
-version: 1.1.0
+version: 2.1.1
 main: chanhne.AntiCheat.AntiCheatPlugin
+folia-supported: true
 api-version: '1.21'
-description: Tự động phát hiện và xóa các item bất hợp pháp trong Minecraft
+description: Tự động phát hiện và xóa các item bất hợp pháp trong Inventory. Support paper/folia
 author: Chanhne
+depend: [ChanhOffPlugin]        # bắt buộc phải có ChanhOffPlugin
+
 commands:
   illegal:
     description: Lệnh quản lý AntiCheat
     aliases: [ill]
-    usage: /<command> <check|reload> [player]
+    usage: /<command> <reload> [player]
     permission: anticheat.admin
 
 permissions:

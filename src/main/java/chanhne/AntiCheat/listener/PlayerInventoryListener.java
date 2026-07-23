@@ -67,12 +67,21 @@ public class PlayerInventoryListener implements Listener {
         }
 
         // Delay 20 tick để inventory load xong
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+        // không hỗ trợ Folia
+        // plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+        //     List<ViolationResult> violations = plugin.getItemChecker().checkInventory(player);
+        //     if (!violations.isEmpty()) {
+        //         enforcementHandler.handleViolations(player, violations);
+        //     }
+        // }, 20L);
+
+        // Hỗ trợ Folia
+        player.getScheduler().runDelayed(plugin, task -> {
             List<ViolationResult> violations = plugin.getItemChecker().checkInventory(player);
             if (!violations.isEmpty()) {
                 enforcementHandler.handleViolations(player, violations);
             }
-        }, 20L);
+        }, null, 20L);
     }
 
     // Kiểm tra khi player nhặt item
@@ -146,12 +155,12 @@ public class PlayerInventoryListener implements Listener {
         if (plugin.shouldBypass(player)) return;
 
         // Delay 1 tick để inventory cập nhật
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+        player.getScheduler().runDelayed(plugin, task -> {
             if (!player.isOnline()) return;
             List<ViolationResult> violations = plugin.getItemChecker().checkInventory(player);
             if (!violations.isEmpty()) {
                 enforcementHandler.handleViolations(player, violations);
             }
-        }, 1L);
+        }, null, 1L);
     }
 }

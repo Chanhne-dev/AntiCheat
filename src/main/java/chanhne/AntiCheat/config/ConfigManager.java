@@ -75,6 +75,7 @@ public class ConfigManager {
         prefix = Message.get("prefix");
     }
 
+    @SuppressWarnings("deprecation")
     private Enchantment getEnchantmentByName(String name) {
         // Thử theo tên Bukkit key
         try {

@@ -7,24 +7,10 @@ prefix: "&c[SunFlower] &r"
 # LỆNH PLUGIN
 # ============================================
 plugin:
-    usage: "&cSử dụng: /{label} <check|reload> [player]"
-    invalid-subcommand: "&cLệnh con không hợp lệ. Dùng: check, reload"
+    usage: "&cSử dụng: /{label} <reload> [player]"
+    invalid-subcommand: "&cLệnh con không hợp lệ. Dùng: reload"
     no-permission: "&cBạn không có quyền!"
     reload-success: "&aĐã reload config thành công!"
-
-# ============================================
-# LỆNH CHECK
-# ============================================
-check:
-    checking-all: "&eĐang kiểm tra tất cả người chơi..."
-    player-not-found: "&cKhông tìm thấy người chơi: &f{player}"
-    violations-found: "&cVi phạm: &f{player} &c({count} lỗi)"
-    player-violations-header: "&cPhát hiện &f{count}&c vi phạm của &f{player}&c:"
-    no-violations: "&aKhông phát hiện vi phạm nào!"
-    player-clean: "&a{player} &akhông có vi phạm!"
-    violation-slot: "    &7Slot {slot} &e{reason}"
-    # Dùng để hiển thị chi tiết từng vi phạm (phần >>)
-    violation-detail: "    &7>> &e{reason}"
 
 # ============================================
 # CẢNH BÁO VI PHẠM (KHI QUÉT TỰ ĐỘNG)
@@ -37,10 +23,3 @@ warning:
     illegal-potion: "&cBình thuốc cấp độ quá cao: &e{item} &c(Level {level})"
     illegal-enchant: "&cEnchantment không hợp lệ: &e{enchant} &clevel {level} trên &e{item}"
     illegal-enchant-item: "&cItem bị cấm enchant: &e{item}"
-
-# ============================================
-# THÔNG BÁO KHI BAN
-# ============================================
-ban:
-    player-banned: "&cBạn đã bị ban &e{duration} phút &cdo sử dụng item bất hợp pháp!"
-    player-banned-broadcast: "&c[SunFlower] &e{player} &bđã bị ban do sử dụng item bất hợp pháp!"

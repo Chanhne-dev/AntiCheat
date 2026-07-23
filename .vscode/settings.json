@@ -1,5 +1,12 @@
 {
     "java.chanhnepile.nullAnalysis.mode": "automatic",
     "java.configuration.updateBuildConfiguration": "automatic",
-    "java.compile.nullAnalysis.mode": "automatic"
+    "java.compile.nullAnalysis.mode": "automatic",
+    "yaml.disableSchemaDetection": [],
+    "yaml.schemas": {
+        "file:///c%3A/Users/congmanh/.vscode/extensions/continue.continue-2.0.0-win32-x64/config-yaml-schema.json": [
+            ".continue/**/*.yaml"
+        ],
+        "https://www.schemastore.org/bukkit-plugin.json": "file:///e%3A/Minecraaft/plugin_test/PLUGIN/AntiCheat/src/main/resources/plugin.yml"
+    }
 }

@@ -9,6 +9,7 @@ import chanhne.AntiCheat.check.ViolationResult;
 import chanhne.AntiCheat.enforcement.EnforcementHandler;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class ScanTask {
 
@@ -23,9 +24,17 @@ public class ScanTask {
 
     public void start() {
         int interval = plugin.getConfigManager().getScanInterval();
-        task = Bukkit.getScheduler().runTaskTimer(plugin, this::scanAllPlayers, interval, interval);
+        Bukkit.getAsyncScheduler().runAtFixedRate(plugin, task -> {
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                player.getScheduler().run(plugin, scheduledTask -> {
+                    scanPlayer(player);
+                }, null);
+            }}, 0, interval * 50L, TimeUnit.MILLISECONDS
+        );
+
         plugin.getLogger().info("Scan task khởi động, interval: " + interval + " tick");
     }
+
 
     public void stop() {
         if (task != null && !task.isCancelled()) {
@@ -34,11 +43,10 @@ public class ScanTask {
         }
     }
 
-    private void scanAllPlayers() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (plugin.shouldBypass(player)) continue;
-            List<ViolationResult> violations = plugin.getItemChecker().checkInventory(player);
-            if (!violations.isEmpty()) enforcementHandler.handleViolations(player, violations);
+    private void scanPlayer(Player player) {
+        List<ViolationResult> violations = plugin.getItemChecker().checkInventory(player);
+        if (!violations.isEmpty()) {
+            enforcementHandler.handleViolations(player, violations);
         }
     }
 }
