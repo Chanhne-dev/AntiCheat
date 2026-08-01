@@ -1,4 +1,4 @@
-package chanhne.AntiCheat.check;
+package chanhne.AntiCheat.check.IllegalItem;
 
 import org.bukkit.inventory.ItemStack;
 

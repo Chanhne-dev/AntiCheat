@@ -1,10 +1,9 @@
-package chanhne.AntiCheat.enforcement;
+package chanhne.AntiCheat.check.IllegalItem;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import chanhne.AntiCheat.AntiCheatPlugin;
-import chanhne.AntiCheat.check.ViolationResult;
 import chanhne.AntiCheat.config.ConfigManager;
 import chanhne.AntiCheat.messages.Message;
 import chanhne.offplugin.api.ChanhOffAPI;

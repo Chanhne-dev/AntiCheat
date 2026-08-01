@@ -1,4 +1,4 @@
-package chanhne.AntiCheat.check;
+package chanhne.AntiCheat.check.IllegalItem;
 
 public enum ViolationType {
 
