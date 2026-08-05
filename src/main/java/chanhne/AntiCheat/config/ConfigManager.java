@@ -24,6 +24,105 @@ public class ConfigManager {
     private boolean notifyAdmins;
     private String prefix;
 
+    // Movement (AnHero pattern) check settings
+    private boolean movementCheckEnabled;
+    private double phantomAscentDelta;
+    private int ascentTicksRequired;
+    private double phantomDescentDelta;
+    private int descentTicksRequired;
+    private int linkWindowTicks;
+    private int movementViolationThreshold;
+    private boolean movementBanEnabled;
+    private boolean movementKickOnDetect;
+    private String movementKickReason;
+    private String movementOffenseType;
+
+    // MaceKill (fall-distance spoof / smash attack) check settings
+    private boolean maceKillCheckEnabled;
+    private double maceSmashFallThreshold;
+    private double maceYoyoAscentDelta;
+    private int maceYoyoWindowTicks;
+    private double maceReturnTolerance;
+    private int maceViolationThreshold;
+    private boolean maceBanEnabled;
+    private boolean maceMitigateDamage;
+    private boolean maceKickOnDetect;
+    private String maceKickReason;
+    private String maceOffenseType;
+
+    // BoatNoclip check settings
+    private boolean boatNoclipCheckEnabled;
+    private int boatStuckTicksRequired;
+    private int boatViolationThreshold;
+    private boolean boatBanEnabled;
+    private boolean boatKickOnDetect;
+    private String boatKickReason;
+    private String boatOffenseType;
+
+    // FreeBoatRide check settings (tích hợp trong BoatNoclipCheck)
+    private boolean freeBoatRideCheckEnabled;
+    private double freeBoatRideDropDelta;
+    private int freeBoatRideDropStreakRequired;
+    private boolean freeBoatRideKickOnDetect;
+    private String freeBoatRideKickReason;
+    private int freeBoatRideViolationThreshold;
+    private boolean freeBoatRideBanEnabled;
+    private String freeBoatRideOffenseType;
+    private boolean freeBoatRideProtectPassengers;
+
+    // CrossbowMachineGun check settings (cancel + kick, không ban)
+    private boolean crossbowCheckEnabled;
+    private double crossbowToleranceRatio;
+    private boolean crossbowKickOnDetect;
+    private String crossbowKickReason;
+
+    // BetterScaffold check settings (cancel-only, không kick/ban)
+    private boolean scaffoldCheckEnabled;
+    private int scaffoldBurstCountThreshold;
+    private long scaffoldBurstWindowMillis;
+    private long scaffoldTowerMinIntervalMillis;
+    private int scaffoldTowerStreakRequired;
+    private boolean scaffoldKickOnBurst;
+    private String scaffoldKickReason;
+
+    // ClickTP (raycast teleport exploit) check settings (cancel-only, không kick/ban)
+    // Lưu ý: ngưỡng phát hiện (cửa sổ thời gian, khoảng cách...) được suy ra từ vật lý
+    // vanilla + dữ liệu tham chiếu thực tế, hardcode thẳng trong ClickTPCheck.java -
+    // không cần expose ra config vì admin không cần (và không nên) tự chỉnh mấy giá trị đó.
+    private boolean clickTpCheckEnabled;
+    private int clickTpFreezeTicks;
+    private boolean clickTpNotifyPlayer;
+
+    // MovementLogger (công cụ ghi log RAW di chuyển để lấy dữ liệu tham chiếu, không phải check)
+    private boolean movementLoggerEnabled;
+    private String movementLoggerFileName;
+    private double movementLoggerMinDistance;
+    private int movementLoggerFlushIntervalSeconds;
+    private int movementLoggerMaxQueueSize;
+
+    // TPFly check settings
+    private boolean tpFlyCheckEnabled;
+    private double tpFlyMaxTeleportDistance;
+    private double tpFlyMaxVerticalDelta;          // onGround
+    private double tpFlyMaxVerticalDeltaAir;       // không onGround (bay lên từ giữa không trung)
+    private int tpFlyViolationThreshold;
+    private boolean tpFlyBanEnabled;
+    private boolean tpFlyKickOnDetect;
+    private String tpFlyKickReason;
+    private String tpFlyOffenseType;
+    private double tpFlyMinVelocityToBypass;
+
+    // Speed check
+    private boolean speedCheckEnabled;
+    private int speedFreezeTicks;
+    private double speedMinBps;
+    private double speedMinVelocityToBypass;
+    private int speedViolationThreshold;
+    private boolean speedBanEnabled;
+    private boolean speedKickOnDetect;
+    private String speedKickReason;
+    private String speedOffenseType;
+
     public ConfigManager(AntiCheatPlugin plugin) {
         this.plugin = plugin;
         load();
@@ -73,9 +172,104 @@ public class ConfigManager {
         logToConsole = config.getBoolean("settings.log-to-console", true);
         notifyAdmins = config.getBoolean("settings.notify-admins", true);
         prefix = Message.get("prefix");
+
+        // Movement (AnHero pattern) check settings
+        movementCheckEnabled = config.getBoolean("movement-check.enabled", true);
+        phantomAscentDelta = config.getDouble("movement-check.phantom-ascent-delta", 3.0);
+        ascentTicksRequired = config.getInt("movement-check.ascent-ticks-required", 3);
+        phantomDescentDelta = config.getDouble("movement-check.phantom-descent-delta", -6.0);
+        descentTicksRequired = config.getInt("movement-check.descent-ticks-required", 2);
+        linkWindowTicks = config.getInt("movement-check.link-window-ticks", 20);
+        movementViolationThreshold = config.getInt("movement-check.violation-threshold", 2);
+        movementBanEnabled = config.getBoolean("movement-check.ban-enabled", true);
+        movementKickOnDetect = config.getBoolean("movement-check.kick-on-detect", true);
+        movementKickReason = config.getString("movement-check.kick-reason", "Phát hiện di chuyển bất thường (AnHero pattern)");
+        movementOffenseType = config.getString("movement-check.offense-type", "AnHero");
+
+        // MaceKill (fall-distance spoof / smash attack) check settings
+        maceKillCheckEnabled = config.getBoolean("mace-kill-check.enabled", true);
+        maceSmashFallThreshold = config.getDouble("mace-kill-check.smash-fall-distance-threshold", 1.5);
+        maceYoyoAscentDelta = config.getDouble("mace-kill-check.yoyo-ascent-delta", 3.0);
+        maceYoyoWindowTicks = config.getInt("mace-kill-check.yoyo-window-ticks", 6);
+        maceReturnTolerance = config.getDouble("mace-kill-check.return-tolerance", 1.0);
+        maceViolationThreshold = config.getInt("mace-kill-check.violation-threshold", 2);
+        maceBanEnabled = config.getBoolean("mace-kill-check.ban-enabled", true);
+        maceMitigateDamage = config.getBoolean("mace-kill-check.mitigate-damage", true);
+        maceKickOnDetect = config.getBoolean("mace-kill-check.kick-on-detect", true);
+        maceKickReason = config.getString("mace-kill-check.kick-reason", "Phát hiện MaceKill (spoof fall damage)");
+        maceOffenseType = config.getString("mace-kill-check.offense-type", "MaceKill");
+
+        // BoatNoclip check settings
+        boatNoclipCheckEnabled = config.getBoolean("boat-noclip-check.enabled", true);
+        boatStuckTicksRequired = config.getInt("boat-noclip-check.stuck-ticks-required", 3);
+        boatViolationThreshold = config.getInt("boat-noclip-check.violation-threshold", 2);
+        boatBanEnabled = config.getBoolean("boat-noclip-check.ban-enabled", true);
+        boatKickOnDetect = config.getBoolean("boat-noclip-check.kick-on-detect", true);
+        boatKickReason = config.getString("boat-noclip-check.kick-reason", "Phát hiện BoatNoclip (thuyền xuyên block)");
+        boatOffenseType = config.getString("boat-noclip-check.offense-type", "BoatNoclip");
+
+        // FreeBoatRide check settings (tích hợp trong BoatNoclipCheck)
+        freeBoatRideCheckEnabled = config.getBoolean("boat-noclip-check.freeboatride.enabled", true);
+        freeBoatRideDropDelta = config.getDouble("boat-noclip-check.freeboatride.passenger-drop-delta", 3.0);
+        freeBoatRideDropStreakRequired = config.getInt("boat-noclip-check.freeboatride.passenger-drop-streak-required", 1);
+        freeBoatRideKickOnDetect = config.getBoolean("boat-noclip-check.freeboatride.kick-on-detect", true);
+        freeBoatRideKickReason = config.getString("boat-noclip-check.freeboatride.kick-reason", "Phát hiện FreeBoatRide (kéo người chơi khác xuống hố)");
+        freeBoatRideViolationThreshold = config.getInt("boat-noclip-check.freeboatride.violation-threshold", 1);
+        freeBoatRideBanEnabled = config.getBoolean("boat-noclip-check.freeboatride.ban-enabled", true);
+        freeBoatRideOffenseType = config.getString("boat-noclip-check.freeboatride.offense-type", "FreeBoatRide");
+        freeBoatRideProtectPassengers = config.getBoolean("boat-noclip-check.freeboatride.protect-passengers", true);
+
+        // CrossbowMachineGun check settings (cancel + kick, không ban)
+        crossbowCheckEnabled = config.getBoolean("crossbow-check.enabled", true);
+        crossbowToleranceRatio = config.getDouble("crossbow-check.tolerance-ratio", 0.85);
+        crossbowKickOnDetect = config.getBoolean("crossbow-check.kick-on-detect", true);
+        crossbowKickReason = config.getString("crossbow-check.kick-reason", "Phát hiện bắn nỏ liên thanh bất thường (CrossbowMachineGun)");
+
+        // BetterScaffold check settings (cancel-only, không kick/ban)
+        scaffoldCheckEnabled = config.getBoolean("scaffold-check.enabled", true);
+        scaffoldBurstCountThreshold = config.getInt("scaffold-check.burst-count-threshold", 3);
+        scaffoldBurstWindowMillis = config.getLong("scaffold-check.burst-window-millis", 120);
+        scaffoldTowerMinIntervalMillis = config.getLong("scaffold-check.tower-min-interval-millis", 250);
+        scaffoldTowerStreakRequired = config.getInt("scaffold-check.tower-streak-required", 2);
+        scaffoldKickOnBurst = config.getBoolean("scaffold-check.kick-on-burst", true);
+        scaffoldKickReason = config.getString("scaffold-check.kick-reason", "Phát hiện đặt nhiều block cùng lúc bất thường (BetterScaffold)");
+
+        // ClickTP (raycast teleport exploit) check settings (cancel-only, không kick/ban)
+        clickTpCheckEnabled = config.getBoolean("click-tp-check.enabled", true);
+        clickTpFreezeTicks = config.getInt("click-tp-check.freeze-ticks", 50);
+        clickTpNotifyPlayer = config.getBoolean("click-tp-check.notify-player", true);
+
+        // MovementLogger settings
+        movementLoggerEnabled = config.getBoolean("movement-logger.enabled", false);
+        movementLoggerFileName = config.getString("movement-logger.file-name", "movement-log.csv");
+        movementLoggerMinDistance = config.getDouble("movement-logger.min-distance-to-log", 0.05);
+        movementLoggerFlushIntervalSeconds = config.getInt("movement-logger.flush-interval-seconds", 2);
+        movementLoggerMaxQueueSize = config.getInt("movement-logger.max-queue-size", 50000);
+
+        // TPFly
+        tpFlyCheckEnabled = config.getBoolean("tpfly-check.enabled", true);
+        tpFlyMaxTeleportDistance = config.getDouble("tpfly-check.max-teleport-distance", 2.5);
+        tpFlyMaxVerticalDelta = config.getDouble("tpfly-check.max-vertical-delta", 1.0);
+        tpFlyMaxVerticalDeltaAir = config.getDouble("tpfly-check.max-vertical-delta-air", 1.5);
+        tpFlyViolationThreshold = config.getInt("tpfly-check.violation-threshold", 2);
+        tpFlyBanEnabled = config.getBoolean("tpfly-check.ban-enabled", true);
+        tpFlyKickOnDetect = config.getBoolean("tpfly-check.kick-on-detect", true);
+        tpFlyKickReason = config.getString("tpfly-check.kick-reason", "Phát hiện TPFly (teleport bất thường)");
+        tpFlyOffenseType = config.getString("tpfly-check.offense-type", "TPFly");
+        tpFlyMinVelocityToBypass = config.getDouble("tpfly-check.min-velocity-to-bypass", 0.2);
+
+        // Speed check
+        speedCheckEnabled = config.getBoolean("speed-check.enabled", true);
+        speedFreezeTicks = config.getInt("speed-check.freeze-ticks", 50);
+        speedMinBps = config.getDouble("speed-check.min-bps", 1.0);
+        speedMinVelocityToBypass = config.getDouble("speed-check.min-velocity-to-bypass", 0.2);
+        speedViolationThreshold = config.getInt("speed-check.violation-threshold", 2);
+        speedBanEnabled = config.getBoolean("speed-check.ban-enabled", true);
+        speedKickOnDetect = config.getBoolean("speed-check.kick-on-detect", true);
+        speedKickReason = config.getString("speed-check.kick-reason", "Phát hiện Speed hack");
+        speedOffenseType = config.getString("speed-check.offense-type", "Speed");
     }
 
-    @SuppressWarnings("deprecation")
     private Enchantment getEnchantmentByName(String name) {
         // Thử theo tên Bukkit key
         try {
@@ -98,4 +292,100 @@ public class ConfigManager {
     public boolean isLogToConsole() { return logToConsole; }
     public boolean isNotifyAdmins() { return notifyAdmins; }
     public String getPrefix() { return prefix; }
+
+    // Movement (AnHero pattern) check getters
+    public boolean isMovementCheckEnabled() { return movementCheckEnabled; }
+    public double getPhantomAscentDelta() { return phantomAscentDelta; }
+    public int getAscentTicksRequired() { return ascentTicksRequired; }
+    public double getPhantomDescentDelta() { return phantomDescentDelta; }
+    public int getDescentTicksRequired() { return descentTicksRequired; }
+    public int getLinkWindowTicks() { return linkWindowTicks; }
+    public int getMovementViolationThreshold() { return movementViolationThreshold; }
+    public boolean isMovementBanEnabled() { return movementBanEnabled; }
+    public boolean isMovementKickOnDetect() { return movementKickOnDetect; }
+    public String getMovementKickReason() { return movementKickReason; }
+    public String getMovementOffenseType() { return movementOffenseType; }
+
+    // MaceKill (fall-distance spoof / smash attack) check getters
+    public boolean isMaceKillCheckEnabled() { return maceKillCheckEnabled; }
+    public double getMaceSmashFallThreshold() { return maceSmashFallThreshold; }
+    public double getMaceYoyoAscentDelta() { return maceYoyoAscentDelta; }
+    public int getMaceYoyoWindowTicks() { return maceYoyoWindowTicks; }
+    public double getMaceReturnTolerance() { return maceReturnTolerance; }
+    public int getMaceViolationThreshold() { return maceViolationThreshold; }
+    public boolean isMaceBanEnabled() { return maceBanEnabled; }
+    public boolean isMaceMitigateDamage() { return maceMitigateDamage; }
+    public boolean isMaceKickOnDetect() { return maceKickOnDetect; }
+    public String getMaceKickReason() { return maceKickReason; }
+    public String getMaceOffenseType() { return maceOffenseType; }
+
+    // BoatNoclip check getters
+    public boolean isBoatNoclipCheckEnabled() { return boatNoclipCheckEnabled; }
+    public int getBoatStuckTicksRequired() { return boatStuckTicksRequired; }
+    public int getBoatViolationThreshold() { return boatViolationThreshold; }
+    public boolean isBoatBanEnabled() { return boatBanEnabled; }
+    public boolean isBoatKickOnDetect() { return boatKickOnDetect; }
+    public String getBoatKickReason() { return boatKickReason; }
+    public String getBoatOffenseType() { return boatOffenseType; }
+
+    // FreeBoatRide check getters (tích hợp trong BoatNoclipCheck)
+    public boolean isFreeBoatRideCheckEnabled() { return freeBoatRideCheckEnabled; }
+    public double getFreeBoatRideDropDelta() { return freeBoatRideDropDelta; }
+    public int getFreeBoatRideDropStreakRequired() { return freeBoatRideDropStreakRequired; }
+    public boolean isFreeBoatRideKickOnDetect() { return freeBoatRideKickOnDetect; }
+    public String getFreeBoatRideKickReason() { return freeBoatRideKickReason; }
+    public int getFreeBoatRideViolationThreshold() { return freeBoatRideViolationThreshold; }
+    public boolean isFreeBoatRideBanEnabled() { return freeBoatRideBanEnabled; }
+    public String getFreeBoatRideOffenseType() { return freeBoatRideOffenseType; }
+    public boolean isFreeBoatRideProtectPassengers() { return freeBoatRideProtectPassengers; }
+
+    // CrossbowMachineGun check getters (cancel + kick, không ban)
+    public boolean isCrossbowCheckEnabled() { return crossbowCheckEnabled; }
+    public double getCrossbowToleranceRatio() { return crossbowToleranceRatio; }
+    public boolean isCrossbowKickOnDetect() { return crossbowKickOnDetect; }
+    public String getCrossbowKickReason() { return crossbowKickReason; }
+
+    // BetterScaffold check getters (cancel-only, không kick/ban)
+    public boolean isScaffoldCheckEnabled() { return scaffoldCheckEnabled; }
+    public int getScaffoldBurstCountThreshold() { return scaffoldBurstCountThreshold; }
+    public long getScaffoldBurstWindowMillis() { return scaffoldBurstWindowMillis; }
+    public long getScaffoldTowerMinIntervalMillis() { return scaffoldTowerMinIntervalMillis; }
+    public int getScaffoldTowerStreakRequired() { return scaffoldTowerStreakRequired; }
+    public boolean isScaffoldKickOnBurst() { return scaffoldKickOnBurst; }
+    public String getScaffoldKickReason() { return scaffoldKickReason; }
+
+    // ClickTP check getters (cancel-only, không kick/ban)
+    public boolean isClickTpCheckEnabled() { return clickTpCheckEnabled; }
+    public int getClickTpFreezeTicks() { return clickTpFreezeTicks; }
+    public boolean isClickTpNotifyPlayer() { return clickTpNotifyPlayer; }
+
+    // MovementLogger getters
+    public boolean isMovementLoggerEnabled() { return movementLoggerEnabled; }
+    public String getMovementLoggerFileName() { return movementLoggerFileName; }
+    public double getMovementLoggerMinDistance() { return movementLoggerMinDistance; }
+    public int getMovementLoggerFlushIntervalSeconds() { return movementLoggerFlushIntervalSeconds; }
+    public int getMovementLoggerMaxQueueSize() { return movementLoggerMaxQueueSize; }
+
+    // TPFly check getters
+    public boolean isTpFlyCheckEnabled() { return tpFlyCheckEnabled; }
+    public double getTpFlyMaxTeleportDistance() { return tpFlyMaxTeleportDistance; }
+    public double getTpFlyMaxVerticalDelta() { return tpFlyMaxVerticalDelta; }
+    public double getTpFlyMaxVerticalDeltaAir() { return tpFlyMaxVerticalDeltaAir; }
+    public int getTpFlyViolationThreshold() { return tpFlyViolationThreshold; }
+    public boolean isTpFlyBanEnabled() { return tpFlyBanEnabled; }
+    public boolean isTpFlyKickOnDetect() { return tpFlyKickOnDetect; }
+    public String getTpFlyKickReason() { return tpFlyKickReason; }
+    public String getTpFlyOffenseType() { return tpFlyOffenseType; }
+    public double getTpFlyMinVelocityToBypass() { return tpFlyMinVelocityToBypass; }
+
+    // Speed check getters
+    public boolean isSpeedCheckEnabled() { return speedCheckEnabled; }
+    public int getSpeedFreezeTicks() { return speedFreezeTicks; }
+    public double getSpeedMinBps() { return speedMinBps; }
+    public double getSpeedMinVelocityToBypass() { return speedMinVelocityToBypass; }
+    public int getSpeedViolationThreshold() { return speedViolationThreshold; }
+    public boolean isSpeedBanEnabled() { return speedBanEnabled; }
+    public boolean isSpeedKickOnDetect() { return speedKickOnDetect; }
+    public String getSpeedKickReason() { return speedKickReason; }
+    public String getSpeedOffenseType() { return speedOffenseType; }
 }

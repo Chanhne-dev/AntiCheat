@@ -14,9 +14,9 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 
 import chanhne.AntiCheat.AntiCheatPlugin;
-import chanhne.AntiCheat.check.ViolationResult;
-import chanhne.AntiCheat.check.ViolationType;
-import chanhne.AntiCheat.enforcement.EnforcementHandler;
+import chanhne.AntiCheat.check.IllegalItem.EnforcementHandler;
+import chanhne.AntiCheat.check.IllegalItem.ViolationResult;
+import chanhne.AntiCheat.check.IllegalItem.ViolationType;
 import chanhne.AntiCheat.messages.Message;
 
 import java.util.List;

@@ -5,8 +5,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
 import chanhne.AntiCheat.AntiCheatPlugin;
-import chanhne.AntiCheat.check.ViolationResult;
-import chanhne.AntiCheat.enforcement.EnforcementHandler;
+import chanhne.AntiCheat.check.IllegalItem.EnforcementHandler;
+import chanhne.AntiCheat.check.IllegalItem.ViolationResult;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -14,8 +14,8 @@ import java.util.concurrent.TimeUnit;
 public class ScanTask {
 
     private final AntiCheatPlugin plugin;
-    private BukkitTask task;
     private final EnforcementHandler enforcementHandler;
+    private BukkitTask task;
 
     public ScanTask(AntiCheatPlugin plugin) {
         this.plugin = plugin;
@@ -32,7 +32,6 @@ public class ScanTask {
             }}, 0, interval * 50L, TimeUnit.MILLISECONDS
         );
 
-        plugin.getLogger().info("Scan task khởi động, interval: " + interval + " tick");
     }
 
 

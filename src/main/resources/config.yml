@@ -18,6 +18,231 @@ discord:
   webhook: "https://discord.com/api/webhooks/xxxxx"
 
 # ==========================================
+# PHÁT HIỆN DI CHUYỂN BẤT THƯỜNG (kiểu "AnHero":
+# bay lên bất thường rồi rơi cực nhanh để tự sát/né kick)
+# ==========================================
+movement-check:
+    enabled: true
+    # Delta Y (block/tick) tối thiểu để tính là "bay lên bất thường"
+    phantom-ascent-delta: 3.0
+    # Số tick liên tiếp phải đạt phantom-ascent-delta mới tính là 1 đợt bay lên
+    ascent-ticks-required: 3
+    # Delta Y (block/tick, âm) tối đa để tính là "rơi bất thường"
+    phantom-descent-delta: -6.0
+    # Số tick liên tiếp phải đạt phantom-descent-delta mới tính là 1 đợt rơi
+    descent-ticks-required: 2
+    # Số tick tối đa giữa lúc kết thúc đợt bay lên và bắt đầu đợt rơi
+    # để 2 đợt được coi là cùng 1 pattern
+    link-window-ticks: 20
+    # Số lần vi phạm trước khi bị xử lý (ban)
+    violation-threshold: 2
+    # Ban khi vượt ngưỡng vi phạm (nếu false chỉ log + thông báo admin)
+    ban-enabled: true
+    # Kick ngay lập tức (qua ChanhOffAPI#kickPlayer) mỗi lần phát hiện,
+    # không lưu lịch sử vi phạm - dùng để cắt ngay hành vi trong lúc
+    # chờ đủ số lần vi phạm để ban
+    kick-on-detect: true
+    kick-reason: "Phát hiện di chuyển bất thường"
+    # Key loại vi phạm dùng khi gọi banPlayer - PHẢI khai báo tương ứng
+    # trong offenses.yml của ChanhOffPlugin, nếu không ban sẽ thất bại
+    offense-type: "Blink"
+
+# ==========================================
+# PHÁT HIỆN "MACEKILL" (spoof fallDistance để ăn
+# Smash Attack bonus damage của Mace mà không rơi thật)
+# ==========================================
+mace-kill-check:
+    enabled: true
+    # fallDistance tối thiểu để 1 đòn Mace được tính là "smash attack"
+    # (đúng ngưỡng vanilla ~1.5 block)
+    smash-fall-distance-threshold: 1.5
+    # Độ tăng Y tối thiểu (so với lịch sử gần nhất) để tính là "đợt bay lên"
+    yoyo-ascent-delta: 3.0
+    # Số tick lịch sử vị trí Y được lưu lại để đối chiếu
+    yoyo-window-ticks: 6
+    # Sai số cho phép giữa Y hiện tại và Y ở đầu cửa sổ lịch sử để tính là
+    # "đã quay lại gần đúng vị trí cũ" (yo-yo)
+    return-tolerance: 1.0
+    # Số lần vi phạm trước khi bị ban
+    violation-threshold: 2
+    ban-enabled: true
+    # Hủy (từ chối) đòn đánh khi phát hiện tín hiệu gian lận rõ ràng
+    mitigate-damage: true
+    # Kick ngay lập tức (qua ChanhOffAPI#kickPlayer) mỗi lần phát hiện,
+    # không lưu lịch sử vi phạm - dùng để cắt ngay hành vi trong lúc
+    # chờ đủ số lần vi phạm để ban
+    kick-on-detect: true
+    kick-reason: "Phát hiện MaceKill (spoof fall damage)"
+    # Key loại vi phạm dùng khi gọi banPlayer - PHẢI khai báo tương ứng
+    # trong offenses.yml của ChanhOffPlugin, nếu không ban sẽ thất bại
+    offense-type: "KillAura"
+
+# ==========================================
+# PHÁT HIỆN "BOATNOCLIP" (thuyền tắt va chạm để
+# xuyên qua block: tường, sàn, trần...)
+# ==========================================
+boat-noclip-check:
+    enabled: true
+    # Số tick liên tiếp thuyền phải "kẹt" trong khối đặc mới tính là
+    # noclip (giảm false positive do va chạm biên tạm thời)
+    stuck-ticks-required: 3
+    # Số lần vi phạm trước khi bị ban
+    violation-threshold: 2
+    ban-enabled: true
+    # Kick ngay lập tức (qua ChanhOffAPI#kickPlayer) mỗi lần phát hiện,
+    # không lưu lịch sử vi phạm - dùng để cắt ngay hành vi trong lúc
+    # chờ đủ số lần vi phạm để ban
+    kick-on-detect: true
+    kick-reason: "Phát hiện BoatNoclip (thuyền xuyên block)"
+    # Key loại vi phạm dùng khi gọi banPlayer - PHẢI khai báo tương ứng
+    # trong offenses.yml của ChanhOffPlugin, nếu không ban sẽ thất bại
+    offense-type: "Blink"
+
+    # ------------------------------------------------------------------
+    # FreeBoatRide - lợi dụng cùng cơ chế noclip để kéo hành khách khác
+    # (>=2 người trên thuyền) rơi xuyên xuống hố/void. Vì có thể gây hại
+    # trực tiếp tới người chơi khác nên mặc định ngưỡng ban thấp hơn hẳn.
+    # ------------------------------------------------------------------
+    freeboatride:
+        enabled: true
+        # Số block Y giảm tối thiểu trong 1 lần VehicleMoveEvent (khi
+        # thuyền có >=2 hành khách) để tính là rơi bất thường
+        passenger-drop-delta: 3.0
+        # Số lần liên tiếp đạt ngưỡng trên mới flag (1 = flag ngay)
+        passenger-drop-streak-required: 1
+        kick-on-detect: true
+        kick-reason: "Phát hiện FreeBoatRide (kéo người chơi khác xuống hố)"
+        # Số lần vi phạm trước khi ban - mặc định 1 vì đây là hành vi có
+        # thể gây hại trực tiếp tới người chơi khác (không giống noclip
+        # solo thông thường)
+        violation-threshold: 1
+        ban-enabled: true
+        # PHẢI khai báo entry "Blink" trong offenses.yml của
+        # ChanhOffPlugin, nếu không ban sẽ thất bại
+        offense-type: "Blink"
+        # Tự động tách nạn nhân khỏi thuyền và dịch chuyển họ về đúng vị trí
+        # ngay TRƯỚC cú kéo bất thường (an toàn, không phải void/khối đặc).
+        # Đây là cơ chế bảo vệ chủ động - nên luôn bật.
+        protect-passengers: true
+
+# ==========================================
+# PHÁT HIỆN "CROSSBOWMACHINEGUN" (bắn nỏ liên
+# thanh, bỏ qua thời gian nạp đạn thật)
+# ==========================================
+crossbow-check:
+    enabled: true
+    # Tỉ lệ nhân với thời gian nạp đạn tối thiểu lý thuyết (theo cấp Quick
+    # Charge) để ra ngưỡng thực tế cho phép - dùng để trừ hao sai số mạng.
+    # VD 0.85 nghĩa là cho phép bắn nhanh hơn tối đa 15% so với lý thuyết
+    # trước khi bị coi là vi phạm. Giảm xuống nếu vẫn còn báo nhầm do lag,
+    # tăng lên nếu muốn bắt chặt hơn.
+    tolerance-ratio: 0.85
+    # Kick ngay lập tức (qua ChanhOffAPI#kickPlayer) mỗi lần phát hiện,
+    # không lưu lịch sử vi phạm, không ban.
+    kick-on-detect: true
+    kick-reason: "Phát hiện bắn nỏ liên thanh bất thường (CrossbowMachineGun)"
+
+# ==========================================
+# PHÁT HIỆN "BETTERSCAFFOLD" (tự đặt block dưới
+# chân, đặt nhiều block cùng lúc, fast-tower)
+# ==========================================
+scaffold-check:
+    enabled: true
+    # Số block đặt trong burst-window-millis mới tính là spam đặt nhiều
+    # block cùng lúc (horizontal/vertical radius)
+    burst-count-threshold: 3
+    burst-window-millis: 120
+    # Khoảng cách tối thiểu (ms) giữa 2 lần đặt block "dưới chân" liên tiếp
+    # để không bị coi là fast-tower
+    tower-min-interval-millis: 250
+    # Số lần liên tiếp nhanh bất thường mới bị coi là fast-tower thật (giảm
+    # false positive cho 1-2 lần nhanh ngẫu nhiên)
+    tower-streak-required: 2
+
+# ==========================================
+# PHÁT HIỆN "ClickTPC" (dùng click teleport của
+# Meteor Client để di chuyển nhanh bất thường)
+# ==========================================
+click-tp-check:
+  enabled: true
+  # Số tick bị "đóng băng" (khoá cứng toạ độ, vẫn xoay camera được) ngay khi
+  # phát hiện vi phạm - 20 tick = 1 giây. Đặt 0 để tắt đóng băng, chỉ kéo
+  # người chơi về vị trí cũ như trước.
+  #
+  # LƯU Ý: các ngưỡng phát hiện (cửa sổ thời gian, khoảng cách...) đã được
+  # hiệu chỉnh dựa trên dữ liệu ClickTP thực tế (xem MovementLogger) và suy
+  # ra từ vật lý client vanilla - hardcode thẳng trong ClickTPCheck.java,
+  # không cần chỉnh ở đây.
+  freeze-ticks: 50
+  # gửi thông báo cho chính người chơi vi phạm khi bị phát hiện/đóng băng
+  notify-player: true
+# ==========================================
+# GHI LOG DI CHUYỂN (lấy dữ liệu tham chiếu để hiệu chỉnh ngưỡng)
+# KHÔNG phải 1 check - không hủy/không cảnh báo gì, chỉ ghi log ra file CSV.
+# MẶC ĐỊNH TẮT vì log mọi di chuyển của mọi người chơi có thể ra file rất
+# lớn - chỉ bật tạm thời khi cần thu thập dữ liệu rồi tắt lại.
+# ==========================================
+movement-logger:
+  enabled: true
+  # File CSV được tạo trong plugins/AntiCheat/logs/<file-name>
+  file-name: "movement-log.csv"
+  # Bỏ qua các move gần như đứng yên/chỉ xoay camera (đơn vị: block) để đỡ rác log
+  min-distance-to-log: 0.05
+  # Số giây giữa mỗi lần flush hàng đợi log ra đĩa
+  flush-interval-seconds: 2
+  # Giới hạn hàng đợi trong bộ nhớ - nếu ghi đĩa không kịp sẽ rớt bớt dòng cũ
+  # nhất thay vì phình bộ nhớ vô hạn
+  max-queue-size: 50000
+
+# ==========================================
+# PHÁT HIỆN "TPFLY" (dịch chuyển tức thời, hackFly)
+# ==========================================
+tpfly-check:
+  enabled: true
+  # Các ngưỡng phát hiện được hiệu chỉnh dựa trên dữ liệu thực tế (MovementLogger)
+  # và suy ra từ vật lý client vanilla
+  # hardcode thẳng trong TPFlyCheck.java, không cần chỉnh ở đây.
+  max-teleport-distance: 2.5
+  # Ngưỡng delta Y tối đa giữa 2 tick liên tiếp để coi là "bay lên bất thường" (tức là không phải rơi tự do)
+  max-vertical-delta: 1.0
+  # Ngưỡng delta Y tối đa giữa 2 tick liên tiếp khi đang ở trên không trung
+  # (không chạm đất) để coi là "bay lên bất thường" (tức là không phải rơi tự do)
+  max-vertical-delta-air: 1.5
+  # Ngưỡng vận tốc tối thiểu để bỏ qua (ví dụ bị đẩy bởi piston, knockback, rơi tự do...)
+  min-velocity-to-bypass: 0.2
+  # Số lần vi phạm trước khi bị ban
+  violation-threshold: 2
+  ban-enabled: true
+  kick-on-detect: true
+  kick-reason: "Phát hiện TPFly (teleport bất thường)"
+  offense-type: "TPFly"
+
+# =========================================
+# PHÁT HIỆN "SPEED" (di chuyển vượt tốc độ cho phép)
+# =========================================
+speed-check:
+  enabled: true
+  # Số tick bị "đóng băng" (khoá cứng toạ độ, vẫn xoay camera được) ngay khi
+  # phát hiện vi phạm - 20 tick = 1 giây. Đặt 0 để tắt đóng băng, chỉ kéo
+  # người chơi về vị trí cũ như trước.
+  #
+  # LƯU Ý: các ngưỡng phát hiện (cửa sổ thời gian, khoảng cách...) đã được
+  # hiệu chỉnh dựa trên dữ liệu ClickTP thực tế (xem MovementLogger) và suy
+  # ra từ vật lý client vanilla - hardcode thẳng trong ClickTPCheck.java,
+  # không cần chỉnh ở đây.
+  freeze-ticks: 50
+  # Bỏ qua tốc độ dưới mức này (giảm nhiễu)
+  min-bps: 1.0
+  # Nếu vận tốc > ngưỡng này, bỏ qua (đẩy, rơi…)
+  min-velocity-to-bypass: 0.25
+  # Số lần vượt ngưỡng trước khi phạt
+  violation-threshold: 2
+  ban-enabled: true
+  kick-on-detect: true
+  kick-reason: "Phát hiện Speed hack"
+  offense-type: "Speed"
+
+# ==========================================
 # DANH SÁCH ITEM BỊ CẤM HOÀN TOÀN
 # ==========================================
 banned-items:

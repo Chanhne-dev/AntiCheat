@@ -8,10 +8,12 @@ author: Chanhne
 depend: [ChanhOffPlugin]        # bắt buộc phải có ChanhOffPlugin
 
 commands:
-  illegal:
+  anticheat:
     description: Lệnh quản lý AntiCheat
-    aliases: [ill]
-    usage: /<command> <reload> [player]
+    aliases: [at]
+    usage: |
+      /<command> reload
+      /<command> check <player> <seconds>
     permission: anticheat.admin
 
 permissions:
