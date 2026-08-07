@@ -112,6 +112,28 @@ public class ConfigManager {
     private String tpFlyOffenseType;
     private double tpFlyMinVelocityToBypass;
 
+    // MeteorFly check settings (phát hiện Fly hack kiểu module Flight của Meteor Client)
+    private boolean meteorFlyCheckEnabled;
+    private boolean meteorFlyDebug;
+    private double meteorFlyCheckOnlyBelowY;
+    private int meteorFlyGraceTicks;
+    private int meteorFlyAscendTicksThreshold;
+    private double meteorFlyAscendMinDelta;
+    private int meteorFlyHoverTicksThreshold;
+    private double meteorFlyHoverMaxDelta;
+    private int meteorFlyMicrofallTicksThreshold;
+    private double meteorFlyMicrofallExpectedDelta;
+    private double meteorFlyMicrofallTolerance;
+    private double meteorFlyMinVelocityToBypass;
+    private int meteorFlyJoinGraceTicks;
+    private double meteorFlyJoinMaxFallDistance;
+    private double meteorFlyJoinFallDistanceBypass;
+    private int meteorFlyViolationThreshold;
+    private boolean meteorFlyBanEnabled;
+    private boolean meteorFlyKickOnDetect;
+    private String meteorFlyKickReason;
+    private String meteorFlyOffenseType;
+
     // Speed check
     private boolean speedCheckEnabled;
     private int speedFreezeTicks;
@@ -258,6 +280,28 @@ public class ConfigManager {
         tpFlyOffenseType = config.getString("tpfly-check.offense-type", "TPFly");
         tpFlyMinVelocityToBypass = config.getDouble("tpfly-check.min-velocity-to-bypass", 0.2);
 
+        // MeteorFly
+        meteorFlyCheckEnabled = config.getBoolean("meteorfly-check.enabled", true);
+        meteorFlyDebug = config.getBoolean("meteorfly-check.debug", false);
+        meteorFlyCheckOnlyBelowY = config.getDouble("meteorfly-check.check-only-below-y", -125.0);
+        meteorFlyGraceTicks = config.getInt("meteorfly-check.grace-ticks", 10);
+        meteorFlyAscendTicksThreshold = config.getInt("meteorfly-check.ascend-ticks-threshold", 8);
+        meteorFlyAscendMinDelta = config.getDouble("meteorfly-check.ascend-min-delta", 0.02);
+        meteorFlyHoverTicksThreshold = config.getInt("meteorfly-check.hover-ticks-threshold", 12);
+        meteorFlyHoverMaxDelta = config.getDouble("meteorfly-check.hover-max-delta", 0.02);
+        meteorFlyMicrofallTicksThreshold = config.getInt("meteorfly-check.microfall-ticks-threshold", 8);
+        meteorFlyMicrofallExpectedDelta = config.getDouble("meteorfly-check.microfall-expected-delta", -0.03130);
+        meteorFlyMicrofallTolerance = config.getDouble("meteorfly-check.microfall-tolerance", 0.0008);
+        meteorFlyMinVelocityToBypass = config.getDouble("meteorfly-check.min-velocity-to-bypass", 0.2);
+        meteorFlyJoinGraceTicks = config.getInt("meteorfly-check.join-grace-ticks", 10);
+        meteorFlyJoinMaxFallDistance = config.getDouble("meteorfly-check.join-max-fall-distance", 1.0);
+        meteorFlyJoinFallDistanceBypass = config.getDouble("meteorfly-check.join-fall-distance-bypass", 3.0);
+        meteorFlyViolationThreshold = config.getInt("meteorfly-check.violation-threshold", 2);
+        meteorFlyBanEnabled = config.getBoolean("meteorfly-check.ban-enabled", true);
+        meteorFlyKickOnDetect = config.getBoolean("meteorfly-check.kick-on-detect", true);
+        meteorFlyKickReason = config.getString("meteorfly-check.kick-reason", "Phát hiện Fly hack (Meteor Client)");
+        meteorFlyOffenseType = config.getString("meteorfly-check.offense-type", "Fly");
+
         // Speed check
         speedCheckEnabled = config.getBoolean("speed-check.enabled", true);
         speedFreezeTicks = config.getInt("speed-check.freeze-ticks", 50);
@@ -377,6 +421,28 @@ public class ConfigManager {
     public String getTpFlyKickReason() { return tpFlyKickReason; }
     public String getTpFlyOffenseType() { return tpFlyOffenseType; }
     public double getTpFlyMinVelocityToBypass() { return tpFlyMinVelocityToBypass; }
+
+    // MeteorFly check getters
+    public boolean isMeteorFlyCheckEnabled() { return meteorFlyCheckEnabled; }
+    public boolean isMeteorFlyDebug() { return meteorFlyDebug; }
+    public double getMeteorFlyCheckOnlyBelowY() { return meteorFlyCheckOnlyBelowY; }
+    public int getMeteorFlyGraceTicks() { return meteorFlyGraceTicks; }
+    public int getMeteorFlyAscendTicksThreshold() { return meteorFlyAscendTicksThreshold; }
+    public double getMeteorFlyAscendMinDelta() { return meteorFlyAscendMinDelta; }
+    public int getMeteorFlyHoverTicksThreshold() { return meteorFlyHoverTicksThreshold; }
+    public double getMeteorFlyHoverMaxDelta() { return meteorFlyHoverMaxDelta; }
+    public int getMeteorFlyMicrofallTicksThreshold() { return meteorFlyMicrofallTicksThreshold; }
+    public double getMeteorFlyMicrofallExpectedDelta() { return meteorFlyMicrofallExpectedDelta; }
+    public double getMeteorFlyMicrofallTolerance() { return meteorFlyMicrofallTolerance; }
+    public double getMeteorFlyMinVelocityToBypass() { return meteorFlyMinVelocityToBypass; }
+    public int getMeteorFlyJoinGraceTicks() { return meteorFlyJoinGraceTicks; }
+    public double getMeteorFlyJoinMaxFallDistance() { return meteorFlyJoinMaxFallDistance; }
+    public double getMeteorFlyJoinFallDistanceBypass() { return meteorFlyJoinFallDistanceBypass; }
+    public int getMeteorFlyViolationThreshold() { return meteorFlyViolationThreshold; }
+    public boolean isMeteorFlyBanEnabled() { return meteorFlyBanEnabled; }
+    public boolean isMeteorFlyKickOnDetect() { return meteorFlyKickOnDetect; }
+    public String getMeteorFlyKickReason() { return meteorFlyKickReason; }
+    public String getMeteorFlyOffenseType() { return meteorFlyOffenseType; }
 
     // Speed check getters
     public boolean isSpeedCheckEnabled() { return speedCheckEnabled; }

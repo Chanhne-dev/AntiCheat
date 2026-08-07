@@ -6,7 +6,7 @@
 
     <groupId>chanhne.AntiCheat</groupId>
     <artifactId>AntiCheat</artifactId>
-    <version>1.5.1</version>
+    <version>1.6.0</version>
     <packaging>jar</packaging>
 
     <name>AntiCheat</name>
