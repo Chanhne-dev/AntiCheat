@@ -113,24 +113,9 @@ class TeleportFlyDetector {
                     "To: " + to);
 
             // Thông báo admin
-            DetectionHelper.notifyAdmins(plugin, config, "warning.tpfly-detected", player.getName());
-
-            // Kick
-            DetectionHelper.kick(plugin, config,
-                    player.getUniqueId(),
-                    player.getName(),
-                    config.isFlyKickOnDetect(),
-                    config.getTpFlyKickReason(),
-                    "TPFly");
-
-            // Ban
-            DetectionHelper.ban(plugin, config,
-                    player.getUniqueId(),
-                    player.getName(),
-                    config.isFlyBanEnabled(),
-                    config.getTpFlyOffenseType(),
-                    "TPFly",
-                    "warning.tpfly-banned");
+            DetectionHelper.notifyAdmins(plugin,  config,  "warning.tpfly-detected",  player.getName());
+            DetectionHelper.kick(plugin,  config, player.getUniqueId(), player.getName(), config.isFlyKickOnDetect(), config.getTpFlyKickReason(), "TPFly");
+            DetectionHelper.ban(plugin,  config, player.getUniqueId(), player.getName(), config.isFlyBanEnabled(), config.getTpFlyOffenseType(), "TPFly", "warning.tpfly-banned");
 
             // Reset sau khi xử lý
             tracker.reset(player.getUniqueId());

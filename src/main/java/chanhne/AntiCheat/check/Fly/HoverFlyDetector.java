@@ -274,21 +274,8 @@ class HoverFlyDetector {
                     "Y: " + String.format("%.5f", currentY));
 
             DetectionHelper.notifyAdmins(plugin, config, "warning.meteorfly-detected", player.getName());
-
-            DetectionHelper.kick(plugin, config,
-                    uuid,
-                    player.getName(),
-                    config.isFlyKickOnDetect(),
-                    config.getMeteorFlyKickReason(),
-                    "MeteorFly");
-
-            DetectionHelper.ban(plugin, config,
-                    uuid,
-                    player.getName(),
-                    config.isFlyBanEnabled(),
-                    config.getMeteorFlyOffenseType(),
-                    "MeteorFly",
-                    "warning.meteorfly-banned");
+            DetectionHelper.kick(plugin, config, uuid, player.getName(), config.isFlyKickOnDetect(), config.getMeteorFlyKickReason(), "MeteorFly");
+            DetectionHelper.ban(plugin, config, uuid, player.getName(), config.isFlyBanEnabled(), config.getMeteorFlyOffenseType(), "MeteorFly", "warning.meteorfly-banned");
 
             tracker.reset(uuid);
             state.resetAll();
