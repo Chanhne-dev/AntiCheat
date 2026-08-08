@@ -34,3 +34,7 @@ warning:
     scaffold-detected: "&c⚠ Đã hủy đặt block bất thường (BetterScaffold): &e{player}"
     freeboatride-detected: "&c⚠ Phát hiện nghi vấn FreeBoatRide (kéo người chơi khác xuống hố): &e{player}"
     freeboatride-banned: "&eNgười chơi &f{player} &eđã bị ban do dùng FreeBoatRide (kéo người chơi khác xuống hố)!"
+    tpfly-detected: "&c⚠ Phát hiện nghi vấn TPFly (dịch chuyển/teleport đột ngột): &e{player}"
+    tpfly-banned: "&eNgười chơi &f{player} &eđã bị ban do dùng TPFly (dịch chuyển/teleport đột ngột)!"
+    meteorfly-detected: "&c⚠ Phát hiện nghi vấn Fly hack (Meteor Client): &e{player}"
+    meteorfly-banned: "&eNgười chơi &f{player} &eđã bị ban do dùng Fly hack (Meteor Client)!"

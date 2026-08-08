@@ -37,7 +37,7 @@ movement-check:
     # Số lần vi phạm trước khi bị xử lý (ban)
     violation-threshold: 2
     # Ban khi vượt ngưỡng vi phạm (nếu false chỉ log + thông báo admin)
-    ban-enabled: true
+    ban-enabled: false
     # Kick ngay lập tức (qua ChanhOffAPI#kickPlayer) mỗi lần phát hiện,
     # không lưu lịch sử vi phạm - dùng để cắt ngay hành vi trong lúc
     # chờ đủ số lần vi phạm để ban
@@ -65,7 +65,7 @@ mace-kill-check:
     return-tolerance: 1.0
     # Số lần vi phạm trước khi bị ban
     violation-threshold: 2
-    ban-enabled: true
+    ban-enabled: false
     # Hủy (từ chối) đòn đánh khi phát hiện tín hiệu gian lận rõ ràng
     mitigate-damage: true
     # Kick ngay lập tức (qua ChanhOffAPI#kickPlayer) mỗi lần phát hiện,
@@ -88,7 +88,7 @@ boat-noclip-check:
     stuck-ticks-required: 3
     # Số lần vi phạm trước khi bị ban
     violation-threshold: 2
-    ban-enabled: true
+    ban-enabled: false
     # Kick ngay lập tức (qua ChanhOffAPI#kickPlayer) mỗi lần phát hiện,
     # không lưu lịch sử vi phạm - dùng để cắt ngay hành vi trong lúc
     # chờ đủ số lần vi phạm để ban
@@ -116,7 +116,7 @@ boat-noclip-check:
         # thể gây hại trực tiếp tới người chơi khác (không giống noclip
         # solo thông thường)
         violation-threshold: 1
-        ban-enabled: true
+        ban-enabled: false
         # PHẢI khai báo entry "Blink" trong offenses.yml của
         # ChanhOffPlugin, nếu không ban sẽ thất bại
         offense-type: "Blink"
@@ -195,85 +195,76 @@ movement-logger:
   max-queue-size: 50000
 
 # ==========================================
-# PHÁT HIỆN "TPFLY" (dịch chuyển tức thời, hackFly)
+# PHÁT HIỆN "FLY" - gộp 2 hướng detect (khớp module chanhne.AntiCheat.check.Fly):
+#   teleport: bắt dịch chuyển/teleport đột ngột (TeleportFlyDetector)
+#   hover:    bắt bay giữ nguyên độ cao/bay lên liên tục kéo dài (HoverFlyDetector,
+#             kiểu module Flight của Meteor Client)
 # ==========================================
-tpfly-check:
+fly-check:
   enabled: true
-  # Các ngưỡng phát hiện được hiệu chỉnh dựa trên dữ liệu thực tế (MovementLogger)
-  # và suy ra từ vật lý client vanilla
-  # hardcode thẳng trong TPFlyCheck.java, không cần chỉnh ở đây.
-  max-teleport-distance: 2.5
-  # Ngưỡng delta Y tối đa giữa 2 tick liên tiếp để coi là "bay lên bất thường" (tức là không phải rơi tự do)
-  max-vertical-delta: 1.0
-  # Ngưỡng delta Y tối đa giữa 2 tick liên tiếp khi đang ở trên không trung
-  # (không chạm đất) để coi là "bay lên bất thường" (tức là không phải rơi tự do)
-  max-vertical-delta-air: 1.5
-  # Ngưỡng vận tốc tối thiểu để bỏ qua (ví dụ bị đẩy bởi piston, knockback, rơi tự do...)
-  min-velocity-to-bypass: 0.2
-  # Số lần vi phạm trước khi bị ban
-  violation-threshold: 2
-  ban-enabled: true
-  kick-on-detect: true
-  kick-reason: "Phát hiện TPFly (teleport bất thường)"
-  offense-type: "TPFly"
-
-# ==========================================
-# PHÁT HIỆN "METEORFLY" (Fly hack kiểu module Flight của Meteor Client:
-# hover lơ lửng, bay lên liên tục, và pattern packet anti-kick 0.03130)
-# ==========================================
-meteorfly-check:
-  enabled: true
-  # Bật để in log chi tiết MỖI TICK ra console (Y, onGround, exempt, các streak...) -
-  # CHỈ bật tạm thời khi cần debug, xong nhớ tắt lại vì log rất nhiều
-  debug: true
-  # Chỉ áp dụng toàn bộ MeteorFlyCheck khi Y <= ngưỡng này - bỏ qua hoàn toàn
-  # (không tính streak, không JoinHover) với người chơi ở Y cao hơn ngưỡng
-  check-only-below-y: -125
-  # Số tick "ân hạn" ngay sau khi rời mặt đất (đỉnh nhảy bình thường) trước khi
-  # bắt đầu tính streak - tránh báo nhầm cú nhảy vanilla
-  grace-ticks: 10
-  # Số tick liên tiếp delta Y dương (đang bay lên chủ động) mới coi là nghi vấn
-  ascend-ticks-threshold: 8
-  # Ngưỡng delta Y tối thiểu để tính là "đang bay lên" (lọc sai số làm tròn)
-  ascend-min-delta: 0.02
-  # Số tick liên tiếp gần như đứng yên theo trục Y khi đang lơ lửng giữa
-  # không trung (không đứng trên block/bơi/leo trèo) mới coi là hover bất thường
-  hover-ticks-threshold: 5
-  # Ngưỡng |delta Y| tối đa để tính là "đang hover" (đứng yên trên không).
-  # Nới rộng theo dữ liệu thực đo được (movement-log): delta quan sát được dao
-  # động 0.075-0.115, không sát 0 tuyệt đối như giả định ban đầu
-  hover-max-delta: 0.13
-  # Số tick liên tiếp có delta Y gần như hằng số tuyệt đối (dấu hiệu Meteor
-  # "Anti Kick: Packet" giả rơi từng bước cố định) mới coi là nghi vấn
-  microfall-ticks-threshold: 5
-  # Bước giảm Y quan sát được thực tế từ movement-log (không phải 0.03130 như
-  # trong source code - có thể do version/tick-rate khác) - dùng khoảng thay vì
-  # 1 giá trị cố định để bao trùm dải 0.075-0.115 đã đo được
-  microfall-expected-delta: -0.095
-  # Sai số cho phép quanh giá trị trên - nới ra vì dải quan sát thực tế khá rộng
-  microfall-tolerance: 0.025
-  # Ngưỡng vận tốc tối thiểu để bỏ qua (bị đẩy bởi piston, knockback, nổ, riptide...)
-  min-velocity-to-bypass: 0.2
-  # === JoinHover: bắt trường hợp join/rejoin ngay lúc đang lơ lửng giữa không trung ===
-  # Số tick (kể từ lúc join/rejoin) để quan sát trước khi kết luận - 10 tick ~ 0.5s
-  join-grace-ticks: 10
-  # Nếu suốt cửa sổ trên người chơi không chạm đất nhưng độ cao không giảm quá
-  # ngưỡng này (block) - trong khi rơi tự do thật phải tụt hàng chục block trong
-  # 1.5s - thì coi là nghi vấn ngay lập tức, không cần đợi thêm pattern khác
-  join-max-fall-distance: 1.0
-  # Nếu Minecraft đã tự ghi nhận FallDistance (khoảng cách rơi tích luỹ, dùng
-  # tính fall damage - lưu trong NBT, giữ nguyên qua thoát/vào lại) >= ngưỡng
-  # này ngay lúc vừa join, coi như bằng chứng đang rơi tự do HỢP LỆ từ trước
-  # đó -> bỏ qua JoinHover hoàn toàn cho phiên này, tránh oan người chơi thật
-  # vừa thoát game giữa lúc đang rơi rồi vào lại
-  join-fall-distance-bypass: 3.0
-  # Số lần vi phạm (ở BẤT KỲ pattern nào) trước khi xử lý - để 1 để xử lý ngay
-  # lần đầu tiên, tránh vanilla tự kick "floating too long" trước khi plugin kịp xử lý
+  # Chung cho cả teleport và hover
   violation-threshold: 1
-  ban-enabled: true
+  ban-enabled: false
   kick-on-detect: true
-  kick-reason: "Phát hiện Fly hack (Meteor Client)"
+  kick-reason: "Phát hiện Fly hack (dịch chuyển/bay bất thường)"
   offense-type: "Fly"
+
+  teleport:
+    # Các ngưỡng phát hiện được hiệu chỉnh dựa trên dữ liệu thực tế (MovementLogger)
+    # và suy ra từ vật lý client vanilla
+    # hardcode thẳng trong TeleportFlyDetector.java, không cần chỉnh ở đây.
+    max-teleport-distance: 2.5
+    # Ngưỡng delta Y tối đa giữa 2 tick liên tiếp để coi là "bay lên bất thường" (tức là không phải rơi tự do)
+    max-vertical-delta: 1.0
+    # Ngưỡng delta Y tối đa giữa 2 tick liên tiếp khi đang ở trên không trung
+    # (không chạm đất) để coi là "bay lên bất thường" (tức là không phải rơi tự do)
+    max-vertical-delta-air: 1.5
+    # Ngưỡng vận tốc tối thiểu để bỏ qua (ví dụ bị đẩy bởi piston, knockback, rơi tự do...)
+    min-velocity-to-bypass: 0.2
+
+  hover:
+    # Bật để in log chi tiết MỖI TICK ra console (Y, onGround, exempt, các streak...) -
+    # CHỈ bật tạm thời khi cần debug, xong nhớ tắt lại vì log rất nhiều
+    debug: false
+    # Chỉ áp dụng toàn bộ HoverFlyDetector khi Y <= ngưỡng này - bỏ qua hoàn toàn
+    # (không tính streak, không JoinHover) với người chơi ở Y cao hơn ngưỡng
+    check-only-below-y: -125
+    # Số tick "ân hạn" ngay sau khi rời mặt đất (đỉnh nhảy bình thường) trước khi
+    # bắt đầu tính streak - tránh báo nhầm cú nhảy vanilla
+    grace-ticks: 10
+    # Số tick liên tiếp delta Y dương (đang bay lên chủ động) mới coi là nghi vấn
+    ascend-ticks-threshold: 8
+    # Ngưỡng delta Y tối thiểu để tính là "đang bay lên" (lọc sai số làm tròn)
+    ascend-min-delta: 0.02
+    # Số tick liên tiếp gần như đứng yên theo trục Y khi đang lơ lửng giữa
+    # không trung (không đứng trên block/bơi/leo trèo) mới coi là hover bất thường
+    hover-ticks-threshold: 5
+    # Ngưỡng |delta Y| tối đa để tính là "đang hover" (đứng yên trên không).
+    # Nới rộng theo dữ liệu thực đo được (movement-log): delta quan sát được dao
+    # động 0.075-0.115, không sát 0 tuyệt đối như giả định ban đầu
+    hover-max-delta: 0.13
+    # Số tick liên tiếp có delta Y gần như hằng số tuyệt đối (dấu hiệu Meteor
+    # "Anti Kick: Packet" giả rơi từng bước cố định) mới coi là nghi vấn
+    microfall-ticks-threshold: 5
+    # Bước giảm Y quan sát được thực tế từ movement-log (không phải 0.03130 như
+    # trong source code - có thể do version/tick-rate khác) - dùng khoảng thay vì
+    # 1 giá trị cố định để bao trùm dải 0.075-0.115 đã đo được
+    microfall-expected-delta: -0.095
+    # Sai số cho phép quanh giá trị trên - nới ra vì dải quan sát thực tế khá rộng
+    microfall-tolerance: 0.025
+    # === JoinHover: bắt trường hợp join/rejoin ngay lúc đang lơ lửng giữa không trung ===
+    # Số tick (kể từ lúc join/rejoin) để quan sát trước khi kết luận - 10 tick ~ 0.5s
+    join-grace-ticks: 10
+    # Nếu suốt cửa sổ trên người chơi không chạm đất nhưng độ cao không giảm quá
+    # ngưỡng này (block) - trong khi rơi tự do thật phải tụt hàng chục block trong
+    # 1.5s - thì coi là nghi vấn ngay lập tức, không cần đợi thêm pattern khác
+    join-max-fall-distance: 1.0
+    # Nếu Minecraft đã tự ghi nhận FallDistance (khoảng cách rơi tích luỹ, dùng
+    # tính fall damage - lưu trong NBT, giữ nguyên qua thoát/vào lại) >= ngưỡng
+    # này ngay lúc vừa join, coi như bằng chứng đang rơi tự do HỢP LỆ từ trước
+    # đó -> bỏ qua JoinHover hoàn toàn cho phiên này, tránh oan người chơi thật
+    # vừa thoát game giữa lúc đang rơi rồi vào lại
+    join-fall-distance-bypass: 3.0
 
 # =========================================
 # PHÁT HIỆN "SPEED" (di chuyển vượt tốc độ cho phép)
@@ -295,7 +286,7 @@ speed-check:
   min-velocity-to-bypass: 0.25
   # Số lần vượt ngưỡng trước khi phạt
   violation-threshold: 2
-  ban-enabled: true
+  ban-enabled: false
   kick-on-detect: true
   kick-reason: "Phát hiện Speed hack"
   offense-type: "Speed"

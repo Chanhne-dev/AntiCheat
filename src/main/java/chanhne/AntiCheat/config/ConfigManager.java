@@ -101,19 +101,18 @@ public class ConfigManager {
     private int movementLoggerMaxQueueSize;
 
     // TPFly check settings
-    private boolean tpFlyCheckEnabled;
+    private boolean flyCheckEnabled;
     private double tpFlyMaxTeleportDistance;
     private double tpFlyMaxVerticalDelta;          // onGround
     private double tpFlyMaxVerticalDeltaAir;       // không onGround (bay lên từ giữa không trung)
     private int tpFlyViolationThreshold;
-    private boolean tpFlyBanEnabled;
-    private boolean tpFlyKickOnDetect;
+    private boolean flyBanEnabled;
+    private boolean flyKickOnDetect;
     private String tpFlyKickReason;
     private String tpFlyOffenseType;
     private double tpFlyMinVelocityToBypass;
 
     // MeteorFly check settings (phát hiện Fly hack kiểu module Flight của Meteor Client)
-    private boolean meteorFlyCheckEnabled;
     private boolean meteorFlyDebug;
     private double meteorFlyCheckOnlyBelowY;
     private int meteorFlyGraceTicks;
@@ -129,8 +128,6 @@ public class ConfigManager {
     private double meteorFlyJoinMaxFallDistance;
     private double meteorFlyJoinFallDistanceBypass;
     private int meteorFlyViolationThreshold;
-    private boolean meteorFlyBanEnabled;
-    private boolean meteorFlyKickOnDetect;
     private String meteorFlyKickReason;
     private String meteorFlyOffenseType;
 
@@ -269,38 +266,35 @@ public class ConfigManager {
         movementLoggerMaxQueueSize = config.getInt("movement-logger.max-queue-size", 50000);
 
         // TPFly
-        tpFlyCheckEnabled = config.getBoolean("tpfly-check.enabled", true);
-        tpFlyMaxTeleportDistance = config.getDouble("tpfly-check.max-teleport-distance", 2.5);
-        tpFlyMaxVerticalDelta = config.getDouble("tpfly-check.max-vertical-delta", 1.0);
-        tpFlyMaxVerticalDeltaAir = config.getDouble("tpfly-check.max-vertical-delta-air", 1.5);
-        tpFlyViolationThreshold = config.getInt("tpfly-check.violation-threshold", 2);
-        tpFlyBanEnabled = config.getBoolean("tpfly-check.ban-enabled", true);
-        tpFlyKickOnDetect = config.getBoolean("tpfly-check.kick-on-detect", true);
-        tpFlyKickReason = config.getString("tpfly-check.kick-reason", "Phát hiện TPFly (teleport bất thường)");
-        tpFlyOffenseType = config.getString("tpfly-check.offense-type", "TPFly");
-        tpFlyMinVelocityToBypass = config.getDouble("tpfly-check.min-velocity-to-bypass", 0.2);
+        flyCheckEnabled = config.getBoolean("fly-check.enabled", true);
+        tpFlyMaxTeleportDistance = config.getDouble("fly-check.teleport.max-teleport-distance", 2.5);
+        tpFlyMaxVerticalDelta = config.getDouble("fly-check.teleport.max-vertical-delta", 1.0);
+        tpFlyMaxVerticalDeltaAir = config.getDouble("fly-check.teleport.max-vertical-delta-air", 1.5);
+        tpFlyViolationThreshold = config.getInt("fly-check.violation-threshold", 1);
+        flyBanEnabled = config.getBoolean("fly-check.ban-enabled", true);
+        flyKickOnDetect = config.getBoolean("fly-check.kick-on-detect", true);
+        tpFlyKickReason = config.getString("fly-check.kick-reason", "Phát hiện Fly hack (dịch chuyển/bay bất thường)");
+        tpFlyOffenseType = config.getString("fly-check.offense-type", "Fly");
+        tpFlyMinVelocityToBypass = config.getDouble("fly-check.teleport.min-velocity-to-bypass", 0.2);
 
         // MeteorFly
-        meteorFlyCheckEnabled = config.getBoolean("meteorfly-check.enabled", true);
-        meteorFlyDebug = config.getBoolean("meteorfly-check.debug", false);
-        meteorFlyCheckOnlyBelowY = config.getDouble("meteorfly-check.check-only-below-y", -125.0);
-        meteorFlyGraceTicks = config.getInt("meteorfly-check.grace-ticks", 10);
-        meteorFlyAscendTicksThreshold = config.getInt("meteorfly-check.ascend-ticks-threshold", 8);
-        meteorFlyAscendMinDelta = config.getDouble("meteorfly-check.ascend-min-delta", 0.02);
-        meteorFlyHoverTicksThreshold = config.getInt("meteorfly-check.hover-ticks-threshold", 12);
-        meteorFlyHoverMaxDelta = config.getDouble("meteorfly-check.hover-max-delta", 0.02);
-        meteorFlyMicrofallTicksThreshold = config.getInt("meteorfly-check.microfall-ticks-threshold", 8);
-        meteorFlyMicrofallExpectedDelta = config.getDouble("meteorfly-check.microfall-expected-delta", -0.03130);
-        meteorFlyMicrofallTolerance = config.getDouble("meteorfly-check.microfall-tolerance", 0.0008);
-        meteorFlyMinVelocityToBypass = config.getDouble("meteorfly-check.min-velocity-to-bypass", 0.2);
-        meteorFlyJoinGraceTicks = config.getInt("meteorfly-check.join-grace-ticks", 10);
-        meteorFlyJoinMaxFallDistance = config.getDouble("meteorfly-check.join-max-fall-distance", 1.0);
-        meteorFlyJoinFallDistanceBypass = config.getDouble("meteorfly-check.join-fall-distance-bypass", 3.0);
-        meteorFlyViolationThreshold = config.getInt("meteorfly-check.violation-threshold", 2);
-        meteorFlyBanEnabled = config.getBoolean("meteorfly-check.ban-enabled", true);
-        meteorFlyKickOnDetect = config.getBoolean("meteorfly-check.kick-on-detect", true);
-        meteorFlyKickReason = config.getString("meteorfly-check.kick-reason", "Phát hiện Fly hack (Meteor Client)");
-        meteorFlyOffenseType = config.getString("meteorfly-check.offense-type", "Fly");
+        meteorFlyDebug = config.getBoolean("fly-check.hover.debug", false);
+        meteorFlyCheckOnlyBelowY = config.getDouble("fly-check.hover.check-only-below-y", -125.0);
+        meteorFlyGraceTicks = config.getInt("fly-check.hover.grace-ticks", 10);
+        meteorFlyAscendTicksThreshold = config.getInt("fly-check.hover.ascend-ticks-threshold", 8);
+        meteorFlyAscendMinDelta = config.getDouble("fly-check.hover.ascend-min-delta", 0.02);
+        meteorFlyHoverTicksThreshold = config.getInt("fly-check.hover.hover-ticks-threshold", 12);
+        meteorFlyHoverMaxDelta = config.getDouble("fly-check.hover.hover-max-delta", 0.02);
+        meteorFlyMicrofallTicksThreshold = config.getInt("fly-check.hover.microfall-ticks-threshold", 8);
+        meteorFlyMicrofallExpectedDelta = config.getDouble("fly-check.hover.microfall-expected-delta", -0.03130);
+        meteorFlyMicrofallTolerance = config.getDouble("fly-check.hover.microfall-tolerance", 0.0008);
+        meteorFlyMinVelocityToBypass = config.getDouble("fly-check.hover.min-velocity-to-bypass", 0.2);
+        meteorFlyJoinGraceTicks = config.getInt("fly-check.hover.join-grace-ticks", 10);
+        meteorFlyJoinMaxFallDistance = config.getDouble("fly-check.hover.join-max-fall-distance", 1.0);
+        meteorFlyJoinFallDistanceBypass = config.getDouble("fly-check.hover.join-fall-distance-bypass", 3.0);
+        meteorFlyViolationThreshold = config.getInt("fly-check.violation-threshold", 1);
+        meteorFlyKickReason = config.getString("fly-check.kick-reason", "Phát hiện Fly hack (dịch chuyển/bay bất thường)");
+        meteorFlyOffenseType = config.getString("fly-check.offense-type", "Fly");
 
         // Speed check
         speedCheckEnabled = config.getBoolean("speed-check.enabled", true);
@@ -411,19 +405,18 @@ public class ConfigManager {
     public int getMovementLoggerMaxQueueSize() { return movementLoggerMaxQueueSize; }
 
     // TPFly check getters
-    public boolean isTpFlyCheckEnabled() { return tpFlyCheckEnabled; }
+    public boolean isFlyCheckEnabled() { return flyCheckEnabled; }
     public double getTpFlyMaxTeleportDistance() { return tpFlyMaxTeleportDistance; }
     public double getTpFlyMaxVerticalDelta() { return tpFlyMaxVerticalDelta; }
     public double getTpFlyMaxVerticalDeltaAir() { return tpFlyMaxVerticalDeltaAir; }
     public int getTpFlyViolationThreshold() { return tpFlyViolationThreshold; }
-    public boolean isTpFlyBanEnabled() { return tpFlyBanEnabled; }
-    public boolean isTpFlyKickOnDetect() { return tpFlyKickOnDetect; }
+    public boolean isFlyBanEnabled() { return flyBanEnabled; }
+    public boolean isFlyKickOnDetect() { return flyKickOnDetect; }
     public String getTpFlyKickReason() { return tpFlyKickReason; }
     public String getTpFlyOffenseType() { return tpFlyOffenseType; }
     public double getTpFlyMinVelocityToBypass() { return tpFlyMinVelocityToBypass; }
 
     // MeteorFly check getters
-    public boolean isMeteorFlyCheckEnabled() { return meteorFlyCheckEnabled; }
     public boolean isMeteorFlyDebug() { return meteorFlyDebug; }
     public double getMeteorFlyCheckOnlyBelowY() { return meteorFlyCheckOnlyBelowY; }
     public int getMeteorFlyGraceTicks() { return meteorFlyGraceTicks; }
@@ -439,8 +432,6 @@ public class ConfigManager {
     public double getMeteorFlyJoinMaxFallDistance() { return meteorFlyJoinMaxFallDistance; }
     public double getMeteorFlyJoinFallDistanceBypass() { return meteorFlyJoinFallDistanceBypass; }
     public int getMeteorFlyViolationThreshold() { return meteorFlyViolationThreshold; }
-    public boolean isMeteorFlyBanEnabled() { return meteorFlyBanEnabled; }
-    public boolean isMeteorFlyKickOnDetect() { return meteorFlyKickOnDetect; }
     public String getMeteorFlyKickReason() { return meteorFlyKickReason; }
     public String getMeteorFlyOffenseType() { return meteorFlyOffenseType; }
 

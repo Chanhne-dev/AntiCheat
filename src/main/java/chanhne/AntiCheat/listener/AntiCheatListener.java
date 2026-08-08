@@ -24,16 +24,16 @@ public class AntiCheatListener implements Listener {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
 
-        // Chỉ teleport nếu player vừa bị kick/ban bởi anti-cheat
-        if (plugin.hasPendingSafeTeleport(uuid)) {
+        if (!plugin.hasPendingSafeTeleport(uuid)) return;
+        plugin.removePendingSafeTeleport(uuid);
+        player.getScheduler().runDelayed(plugin, task -> {
+            if (!player.isOnline()) return;
             Location loc = player.getLocation();
-            // Kiểm tra vị trí nguy hiểm (có thể luôn teleport để an toàn)
+
             if (loc.getY() < 0 || !loc.getBlock().getType().isSolid()) {
                 Location safe = HighestSolidBlock.get(loc.getWorld(), loc.getBlockX(), loc.getBlockZ());
                 player.teleportAsync(safe);
             }
-            // Xóa flag sau khi đã xử lý
-            plugin.removePendingSafeTeleport(uuid);
-        }
+        }, null, 1L);
     }
 }

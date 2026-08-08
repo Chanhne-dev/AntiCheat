@@ -11,10 +11,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import chanhne.AntiCheat.check.TrouserStreak.AnHeroMovementCheck;
 import chanhne.AntiCheat.check.TrouserStreak.BetterScaffoldCheck;
 import chanhne.AntiCheat.check.TrouserStreak.MaceKillCheck;
-import chanhne.AntiCheat.check.TrouserStreak.TPFlyCheck;
+// import chanhne.AntiCheat.check.TrouserStreak.TPFlyCheck;
 import chanhne.AntiCheat.check.TrouserStreak.BoatNoclipCheck;
 import chanhne.AntiCheat.check.TrouserStreak.CrossbowMachineGunCheck;
 import chanhne.AntiCheat.check.MeteorClient.ClickTPCheck;
+// import chanhne.AntiCheat.check.MeteorClient.MeteorFlyCheck;
+import chanhne.AntiCheat.check.Fly.FlyCheck;
 // import chanhne.AntiCheat.check.MeteorClient.SpeedCheck;
 import chanhne.AntiCheat.check.IllegalItem.CommandChecker;
 import chanhne.AntiCheat.check.IllegalItem.EnforcementHandler;
@@ -57,21 +59,29 @@ public class AntiCheatPlugin extends JavaPlugin {
         commandHandler = new CommandHandler(this);
         discordWebhook = new DiscordWebhook(getConfig().getString("discord.webhook"));
         enforcementHandler = new EnforcementHandler(this);
+        FlyCheck flyCheck = new FlyCheck(this);
 
         // Đăng ký listener
         Bukkit.getPluginManager().registerEvents(new BlockBreakListener(this),this);
         Bukkit.getPluginManager().registerEvents(new BlockPlaceListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerInventoryListener(this), this);
         Bukkit.getPluginManager().registerEvents(new AntiCheatListener(this), this);
+
+        // Đăng ký các checkers
         Bukkit.getPluginManager().registerEvents(new CommandChecker(this), this);
         Bukkit.getPluginManager().registerEvents(new AnHeroMovementCheck(this), this);
-        Bukkit.getPluginManager().registerEvents(new MaceKillCheck(this), this);
+        Bukkit.getPluginManager().registerEvents(new BetterScaffoldCheck(this), this);
         Bukkit.getPluginManager().registerEvents(new BoatNoclipCheck(this), this);
         Bukkit.getPluginManager().registerEvents(new CrossbowMachineGunCheck(this), this);
         Bukkit.getPluginManager().registerEvents(new ClickTPCheck(this), this);
-        Bukkit.getPluginManager().registerEvents(new BetterScaffoldCheck(this), this);
-        Bukkit.getPluginManager().registerEvents(new TPFlyCheck(this), this);
+        Bukkit.getPluginManager().registerEvents(new MaceKillCheck(this), this);
+        // Bukkit.getPluginManager().registerEvents(new TPFlyCheck(this), this);
+        // Bukkit.getPluginManager().registerEvents(new MeteorFlyCheck(this), this);
+        Bukkit.getPluginManager().registerEvents(flyCheck, this);
         // Bukkit.getPluginManager().registerEvents(new SpeedCheck(this), this);
+
+
+        flyCheck.startForOnlinePlayers(); // bắt kịp người chơi đã online sẵn khi /reload
 
         // MovementLogger: công cụ ghi log RAW di chuyển để lấy dữ liệu tham chiếu (mặc định
         // tắt trong config.yml, chỉ bật tạm thời khi cần thu thập dữ liệu hiệu chỉnh ngưỡng)
