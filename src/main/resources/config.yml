@@ -226,8 +226,10 @@ fly-check:
     # Bật để in log chi tiết MỖI TICK ra console (Y, onGround, exempt, các streak...) -
     # CHỈ bật tạm thời khi cần debug, xong nhớ tắt lại vì log rất nhiều
     debug: false
-    # Chỉ áp dụng toàn bộ HoverFlyDetector khi Y <= ngưỡng này - bỏ qua hoàn toàn
-    # (không tính streak, không JoinHover) với người chơi ở Y cao hơn ngưỡng
+    # Bỏ qua vùng void kỹ thuật RẤT SÂU dưới ngưỡng này (nếu map bạn có khu vực
+    # như vậy và không muốn check ở đó, ví dụ khu vực kỹ thuật/void dưới đáy).
+    # Mặc định -2032 (sát đáy world Paper) nên KHÔNG loại trừ khu vực chơi bình
+    # thường nào cả - check áp dụng ở TOÀN BỘ độ cao trừ khi bạn tự chỉnh lại.
     check-only-below-y: -125
     # Số tick "ân hạn" ngay sau khi rời mặt đất (đỉnh nhảy bình thường) trước khi
     # bắt đầu tính streak - tránh báo nhầm cú nhảy vanilla
@@ -265,6 +267,36 @@ fly-check:
     # đó -> bỏ qua JoinHover hoàn toàn cho phiên này, tránh oan người chơi thật
     # vừa thoát game giữa lúc đang rơi rồi vào lại
     join-fall-distance-bypass: 3.0
+
+# ==========================================
+# PHÁT HIỆN "ANTIVOID" (module tự "nảy" lại tránh rơi xuống void thay vì chết
+# do sát thương void - kiểu module AntiVoid của Meteor Client)
+# ==========================================
+antivoid-check:
+  enabled: true
+  # Bật để in log chi tiết mỗi lần phát hiện "nảy" ra console - chỉ bật tạm
+  # thời khi cần debug
+  debug: false
+  # Vùng "gần void" được tính TƯƠNG ĐỐI theo World#getMinHeight() của từng
+  # world (Overworld -64, Nether 0, world custom...) cộng thêm biên độ này -
+  # ví dụ Overworld: chỉ quan tâm khi Y <= -64 + 8 = -56
+  void-zone-margin: 8.0
+  # Delta Y dương tối thiểu để tính là "đang nảy lên" (sau khi vừa rơi)
+  bounce-min-delta: 0.1
+  # Độ nhảy vọt tối thiểu giữa 2 delta liên tiếp (từ rơi sang nảy) để coi là
+  # bất thường - vật lý thật không thể tự đảo chiều đột ngột giữa không trung
+  bounce-min-delta-jump: 0.3
+  # Cửa sổ thời gian (tick) để đếm đủ số lần nảy liên tiếp, quá thời hạn này
+  # mà chưa đủ thì reset đếm lại từ đầu
+  bounce-window-ticks: 100
+  # Số lần "nảy" trong cửa sổ trên mới coi là nghi vấn AntiVoid
+  bounce-count-threshold: 2
+  # Số lần vi phạm trước khi xử lý
+  violation-threshold: 1
+  ban-enabled: true
+  kick-on-detect: true
+  kick-reason: "Phát hiện AntiVoid (né sát thương void bất thường)"
+  offense-type: "AntiVoid"
 
 # =========================================
 # PHÁT HIỆN "SPEED" (di chuyển vượt tốc độ cho phép)

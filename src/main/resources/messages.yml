@@ -38,3 +38,5 @@ warning:
     tpfly-banned: "&eNgười chơi &f{player} &eđã bị ban do dùng TPFly (dịch chuyển/teleport đột ngột)!"
     meteorfly-detected: "&c⚠ Phát hiện nghi vấn Fly hack (Meteor Client): &e{player}"
     meteorfly-banned: "&eNgười chơi &f{player} &eđã bị ban do dùng Fly hack (Meteor Client)!"
+    antivoid-detected: "&c⚠ Phát hiện nghi vấn AntiVoid (né sát thương void bất thường): &e{player}"
+    antivoid-banned: "&eNgười chơi &f{player} &eđã bị ban do dùng AntiVoid (né sát thương void bất thường)!"

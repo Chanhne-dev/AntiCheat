@@ -131,6 +131,20 @@ public class ConfigManager {
     private String meteorFlyKickReason;
     private String meteorFlyOffenseType;
 
+    // AntiVoid check settings (phát hiện module "nảy" lại tránh rơi xuống void)
+    private boolean antiVoidCheckEnabled;
+    private boolean antiVoidDebug;
+    private double antiVoidZoneMargin;
+    private double antiVoidBounceMinDelta;
+    private double antiVoidBounceMinDeltaJump;
+    private int antiVoidBounceWindowTicks;
+    private int antiVoidBounceCountThreshold;
+    private int antiVoidViolationThreshold;
+    private boolean antiVoidBanEnabled;
+    private boolean antiVoidKickOnDetect;
+    private String antiVoidKickReason;
+    private String antiVoidOffenseType;
+
     // Speed check
     private boolean speedCheckEnabled;
     private int speedFreezeTicks;
@@ -279,7 +293,7 @@ public class ConfigManager {
 
         // MeteorFly
         meteorFlyDebug = config.getBoolean("fly-check.hover.debug", false);
-        meteorFlyCheckOnlyBelowY = config.getDouble("fly-check.hover.check-only-below-y", -125.0);
+        meteorFlyCheckOnlyBelowY = config.getDouble("fly-check.hover.check-only-below-y", -2032.0);
         meteorFlyGraceTicks = config.getInt("fly-check.hover.grace-ticks", 10);
         meteorFlyAscendTicksThreshold = config.getInt("fly-check.hover.ascend-ticks-threshold", 8);
         meteorFlyAscendMinDelta = config.getDouble("fly-check.hover.ascend-min-delta", 0.02);
@@ -295,6 +309,20 @@ public class ConfigManager {
         meteorFlyViolationThreshold = config.getInt("fly-check.violation-threshold", 1);
         meteorFlyKickReason = config.getString("fly-check.kick-reason", "Phát hiện Fly hack (dịch chuyển/bay bất thường)");
         meteorFlyOffenseType = config.getString("fly-check.offense-type", "Fly");
+
+        // AntiVoid
+        antiVoidCheckEnabled = config.getBoolean("antivoid-check.enabled", true);
+        antiVoidDebug = config.getBoolean("antivoid-check.debug", false);
+        antiVoidZoneMargin = config.getDouble("antivoid-check.void-zone-margin", 8.0);
+        antiVoidBounceMinDelta = config.getDouble("antivoid-check.bounce-min-delta", 0.1);
+        antiVoidBounceMinDeltaJump = config.getDouble("antivoid-check.bounce-min-delta-jump", 0.3);
+        antiVoidBounceWindowTicks = config.getInt("antivoid-check.bounce-window-ticks", 100);
+        antiVoidBounceCountThreshold = config.getInt("antivoid-check.bounce-count-threshold", 2);
+        antiVoidViolationThreshold = config.getInt("antivoid-check.violation-threshold", 1);
+        antiVoidBanEnabled = config.getBoolean("antivoid-check.ban-enabled", true);
+        antiVoidKickOnDetect = config.getBoolean("antivoid-check.kick-on-detect", true);
+        antiVoidKickReason = config.getString("antivoid-check.kick-reason", "Phát hiện AntiVoid (né sát thương void bất thường)");
+        antiVoidOffenseType = config.getString("antivoid-check.offense-type", "AntiVoid");
 
         // Speed check
         speedCheckEnabled = config.getBoolean("speed-check.enabled", true);
@@ -434,6 +462,20 @@ public class ConfigManager {
     public int getMeteorFlyViolationThreshold() { return meteorFlyViolationThreshold; }
     public String getMeteorFlyKickReason() { return meteorFlyKickReason; }
     public String getMeteorFlyOffenseType() { return meteorFlyOffenseType; }
+
+    // AntiVoid check getters
+    public boolean isAntiVoidCheckEnabled() { return antiVoidCheckEnabled; }
+    public boolean isAntiVoidDebug() { return antiVoidDebug; }
+    public double getAntiVoidZoneMargin() { return antiVoidZoneMargin; }
+    public double getAntiVoidBounceMinDelta() { return antiVoidBounceMinDelta; }
+    public double getAntiVoidBounceMinDeltaJump() { return antiVoidBounceMinDeltaJump; }
+    public int getAntiVoidBounceWindowTicks() { return antiVoidBounceWindowTicks; }
+    public int getAntiVoidBounceCountThreshold() { return antiVoidBounceCountThreshold; }
+    public int getAntiVoidViolationThreshold() { return antiVoidViolationThreshold; }
+    public boolean isAntiVoidBanEnabled() { return antiVoidBanEnabled; }
+    public boolean isAntiVoidKickOnDetect() { return antiVoidKickOnDetect; }
+    public String getAntiVoidKickReason() { return antiVoidKickReason; }
+    public String getAntiVoidOffenseType() { return antiVoidOffenseType; }
 
     // Speed check getters
     public boolean isSpeedCheckEnabled() { return speedCheckEnabled; }

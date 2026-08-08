@@ -14,6 +14,7 @@ import chanhne.AntiCheat.check.TrouserStreak.MaceKillCheck;
 // import chanhne.AntiCheat.check.TrouserStreak.TPFlyCheck;
 import chanhne.AntiCheat.check.TrouserStreak.BoatNoclipCheck;
 import chanhne.AntiCheat.check.TrouserStreak.CrossbowMachineGunCheck;
+import chanhne.AntiCheat.check.MeteorClient.AntiVoidCheck;
 import chanhne.AntiCheat.check.MeteorClient.ClickTPCheck;
 // import chanhne.AntiCheat.check.MeteorClient.MeteorFlyCheck;
 import chanhne.AntiCheat.check.Fly.FlyCheck;
@@ -77,11 +78,13 @@ public class AntiCheatPlugin extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new MaceKillCheck(this), this);
         // Bukkit.getPluginManager().registerEvents(new TPFlyCheck(this), this);
         // Bukkit.getPluginManager().registerEvents(new MeteorFlyCheck(this), this);
-        Bukkit.getPluginManager().registerEvents(flyCheck, this);
         // Bukkit.getPluginManager().registerEvents(new SpeedCheck(this), this);
-
-
+        Bukkit.getPluginManager().registerEvents(flyCheck, this);
         flyCheck.startForOnlinePlayers(); // bắt kịp người chơi đã online sẵn khi /reload
+
+        AntiVoidCheck antiVoidCheck = new AntiVoidCheck(this);
+        Bukkit.getPluginManager().registerEvents(antiVoidCheck, this);
+        antiVoidCheck.startForOnlinePlayers();
 
         // MovementLogger: công cụ ghi log RAW di chuyển để lấy dữ liệu tham chiếu (mặc định
         // tắt trong config.yml, chỉ bật tạm thời khi cần thu thập dữ liệu hiệu chỉnh ngưỡng)

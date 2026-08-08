@@ -108,7 +108,7 @@ class HoverFlyDetector {
                 scheduledTask -> tick(player),
                 () -> stopTracking(uuid), // retired callback: entity không còn hợp lệ (đã rời server)
                 2L,  // delay ban đầu
-                1L   // chạy mỗi 1 tick
+                2L   // chạy mỗi 2 tick
         );
         tasks.put(uuid, task);
     }
@@ -142,13 +142,15 @@ class HoverFlyDetector {
         Location loc = player.getLocation();
         double currentY = loc.getY();
 
-        // Chỉ áp dụng khi Y <= ngưỡng cấu hình (mặc định -125) - bỏ qua hoàn toàn
-        // (không tính streak, không JoinHover) ở khu vực cao hơn
-        double checkOnlyBelowY = config.getMeteorFlyCheckOnlyBelowY();
-        if (currentY > checkOnlyBelowY) {
+        // Bỏ qua vùng void kỹ thuật RẤT SÂU dưới ngưỡng này (nếu bạn có khu vực như
+        // vậy trên map và không muốn check ở đó). Mặc định cực thấp (-2032, sát đáy
+        // world Paper) nên KHÔNG loại trừ khu vực chơi bình thường nào cả - check áp
+        // dụng ở TOÀN BỘ độ cao trừ khi bạn tự chỉnh lại giá trị này trong config.
+        double skipBelowY = config.getMeteorFlyCheckOnlyBelowY();
+        if (currentY < skipBelowY) {
             if (config.isMeteorFlyDebug()) {
                 plugin.getLogger().info("[MeteorFly-DEBUG] " + player.getName()
-                        + " bỏ qua vì Y=" + String.format("%.2f", currentY) + " > " + checkOnlyBelowY);
+                        + " bỏ qua vì Y=" + String.format("%.2f", currentY) + " < " + skipBelowY);
             }
             state.resetAll();
             state.lastY = currentY;
