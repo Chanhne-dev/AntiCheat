@@ -3,14 +3,14 @@ package chanhne.AntiCheat.config;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 import chanhne.AntiCheat.messages.Message;
 
 import java.util.*;
 
 public class ConfigManager {
 
-    private final AntiCheatPlugin plugin;
+    private final Mainplugin plugin;
     private FileConfiguration config;
 
     // Cache
@@ -20,6 +20,8 @@ public class ConfigManager {
     private int maxPotionAmplifier;
     private int scanInterval;
     private int banDurationMinutes;
+    private boolean itemBanEnabled;
+    private int itemViolationThreshold;
     private boolean logToConsole;
     private boolean notifyAdmins;
     private String prefix;
@@ -124,6 +126,7 @@ public class ConfigManager {
     private double meteorFlyMicrofallExpectedDelta;
     private double meteorFlyMicrofallTolerance;
     private double meteorFlyMinVelocityToBypass;
+    private int meteorFlyMaceExemptTicks;
     private int meteorFlyJoinGraceTicks;
     private double meteorFlyJoinMaxFallDistance;
     private double meteorFlyJoinFallDistanceBypass;
@@ -145,6 +148,29 @@ public class ConfigManager {
     private String antiVoidKickReason;
     private String antiVoidOffenseType;
 
+    // AntiAutoTotem check settings (phát hiện refill totem nhanh bất thường sau khi cứu mạng)
+    private boolean antiAutoTotemCheckEnabled;
+    private boolean antiAutoTotemDebug;
+    private int antiAutoTotemMinRefillTicks;
+    private int antiAutoTotemManualActionGraceTicks;
+    private int antiAutoTotemViolationThreshold;
+    private boolean antiAutoTotemBanEnabled;
+    private boolean antiAutoTotemKickOnDetect;
+    private String antiAutoTotemKickReason;
+    private String antiAutoTotemOffenseType;
+
+    // AntiWindChargeJump check settings (phát hiện tự động nhảy sau khi ném Wind Charge)
+    private boolean antiWindChargeJumpCheckEnabled;
+    private boolean antiWindChargeJumpDebug;
+    private double antiWindChargeJumpMinPitch;
+    private double antiWindChargeJumpMaxHeightGain;
+    private int antiWindChargeJumpMaxSessionTicks;
+    private int antiWindChargeJumpViolationThreshold;
+    private boolean antiWindChargeJumpBanEnabled;
+    private boolean antiWindChargeJumpKickOnDetect;
+    private String antiWindChargeJumpKickReason;
+    private String antiWindChargeJumpOffenseType;
+
     // Speed check
     private boolean speedCheckEnabled;
     private int speedFreezeTicks;
@@ -156,7 +182,11 @@ public class ConfigManager {
     private String speedKickReason;
     private String speedOffenseType;
 
-    public ConfigManager(AntiCheatPlugin plugin) {
+    // block-command check
+    private boolean blockCommandEnabled;
+    private Set<String> blockedCommands;
+
+    public ConfigManager(Mainplugin plugin) {
         this.plugin = plugin;
         load();
     }
@@ -198,10 +228,28 @@ public class ConfigManager {
             invalidEnchantItems.add(item.toUpperCase());
         }
 
+        // Load block-command settings
+        blockCommandEnabled = config.getBoolean("block-command.enabled", true);
+        blockedCommands = new HashSet<>();
+
+        for (String command : config.getStringList("block-command.commands")) {
+            String normalized = command.trim().toLowerCase(Locale.ROOT);
+
+            if (normalized.startsWith("/")) {
+                normalized = normalized.substring(1);
+            }
+
+            if (!normalized.isEmpty()) {
+                blockedCommands.add(normalized);
+            }
+        }
+
         // Load settings
         maxPotionAmplifier = config.getInt("max-potion-levels.max-amplifier", 1);
         scanInterval = config.getInt("settings.scan-interval", 40);
         banDurationMinutes = config.getInt("settings.ban-duration-minutes", 1);
+        itemBanEnabled = config.getBoolean("settings.item-ban-enabled", true);
+        itemViolationThreshold = config.getInt("settings.item-violation-threshold", 1);
         logToConsole = config.getBoolean("settings.log-to-console", true);
         notifyAdmins = config.getBoolean("settings.notify-admins", true);
         prefix = Message.get("prefix");
@@ -303,6 +351,7 @@ public class ConfigManager {
         meteorFlyMicrofallExpectedDelta = config.getDouble("fly-check.hover.microfall-expected-delta", -0.03130);
         meteorFlyMicrofallTolerance = config.getDouble("fly-check.hover.microfall-tolerance", 0.0008);
         meteorFlyMinVelocityToBypass = config.getDouble("fly-check.hover.min-velocity-to-bypass", 0.2);
+        meteorFlyMaceExemptTicks = config.getInt("fly-check.hover.mace-exempt-ticks", 30);
         meteorFlyJoinGraceTicks = config.getInt("fly-check.hover.join-grace-ticks", 10);
         meteorFlyJoinMaxFallDistance = config.getDouble("fly-check.hover.join-max-fall-distance", 1.0);
         meteorFlyJoinFallDistanceBypass = config.getDouble("fly-check.hover.join-fall-distance-bypass", 3.0);
@@ -323,6 +372,35 @@ public class ConfigManager {
         antiVoidKickOnDetect = config.getBoolean("antivoid-check.kick-on-detect", true);
         antiVoidKickReason = config.getString("antivoid-check.kick-reason", "Phát hiện AntiVoid (né sát thương void bất thường)");
         antiVoidOffenseType = config.getString("antivoid-check.offense-type", "AntiVoid");
+
+        // AntiAutoTotem
+        antiAutoTotemCheckEnabled = config.getBoolean("antiautototem-check.enabled", true);
+        antiAutoTotemDebug = config.getBoolean("antiautototem-check.debug", false);
+        antiAutoTotemMinRefillTicks = config.getInt("antiautototem-check.min-refill-ticks", 3);
+        antiAutoTotemManualActionGraceTicks = config.getInt("antiautototem-check.manual-action-grace-ticks", 3);
+        antiAutoTotemViolationThreshold = config.getInt("antiautototem-check.violation-threshold", 2);
+        antiAutoTotemBanEnabled = config.getBoolean("antiautototem-check.ban-enabled", true);
+        antiAutoTotemKickOnDetect = config.getBoolean("antiautototem-check.kick-on-detect", true);
+        antiAutoTotemKickReason = config.getString("antiautototem-check.kick-reason", "Phát hiện AutoTotem (refill totem bất thường)");
+        antiAutoTotemOffenseType = config.getString("antiautototem-check.offense-type", "AutoTotem");
+
+        // AntiWindChargeJump
+        antiWindChargeJumpCheckEnabled = config.getBoolean("antiwindchargejump-check.enabled", true);
+        antiWindChargeJumpDebug = config.getBoolean("antiwindchargejump-check.debug", false);
+        antiWindChargeJumpMinPitch = config.getDouble("antiwindchargejump-check.min-pitch", 50.0);
+        // Độ cao tối đa hợp lý (block) cho 1 phiên bay tự đẩy bằng Wind Charge -
+        // theo dữ liệu quan sát thực tế: người chơi thật đạt ~5 block, cheat đạt
+        // tới ~12 block. Đặt ngưỡng cao hơn mức thật 1 chút để tránh oan người
+        // chơi giỏi/may mắn, nhưng vẫn đủ thấp để bắt được mức bất thường.
+        antiWindChargeJumpMaxHeightGain = config.getDouble("antiwindchargejump-check.max-height-gain", 8.0);
+        // Số tick tối đa theo dõi 1 phiên bay trước khi bỏ qua (không kết luận
+        // gì) nếu chưa chạm đất trở lại - phòng trường hợp rơi xuống hố sâu/bơi
+        antiWindChargeJumpMaxSessionTicks = config.getInt("antiwindchargejump-check.max-session-ticks", 100);
+        antiWindChargeJumpViolationThreshold = config.getInt("antiwindchargejump-check.violation-threshold", 1);
+        antiWindChargeJumpBanEnabled = config.getBoolean("antiwindchargejump-check.ban-enabled", false);
+        antiWindChargeJumpKickOnDetect = config.getBoolean("antiwindchargejump-check.kick-on-detect", false);
+        antiWindChargeJumpKickReason = config.getString("antiwindchargejump-check.kick-reason", "Phát hiện WindChargeJump (tự động nhảy bất thường)");
+        antiWindChargeJumpOffenseType = config.getString("antiwindchargejump-check.offense-type", "WindChargeJump");
 
         // Speed check
         speedCheckEnabled = config.getBoolean("speed-check.enabled", true);
@@ -352,11 +430,13 @@ public class ConfigManager {
     public Set<String> getBannedItems() { return bannedItems; }
     public Map<Enchantment, Integer> getMaxEnchantLevels() { return maxEnchantLevels; }
     public Set<String> getInvalidEnchantItems() { return invalidEnchantItems; }
+    public Set<String> getBlockedCommands() { return blockedCommands; }
     public int getMaxPotionAmplifier() { return maxPotionAmplifier; }
     public int getScanInterval() { return scanInterval; }
     public int getBanDurationMinutes() { return banDurationMinutes; }
     public boolean isLogToConsole() { return logToConsole; }
     public boolean isNotifyAdmins() { return notifyAdmins; }
+    public boolean isBlockCommandEnabled() { return blockCommandEnabled; }
     public String getPrefix() { return prefix; }
 
     // Movement (AnHero pattern) check getters
@@ -368,6 +448,8 @@ public class ConfigManager {
     public int getLinkWindowTicks() { return linkWindowTicks; }
     public int getMovementViolationThreshold() { return movementViolationThreshold; }
     public boolean isMovementBanEnabled() { return movementBanEnabled; }
+    public boolean isItemBanEnabled() { return itemBanEnabled; }
+    public int getItemViolationThreshold() { return itemViolationThreshold; }
     public boolean isMovementKickOnDetect() { return movementKickOnDetect; }
     public String getMovementKickReason() { return movementKickReason; }
     public String getMovementOffenseType() { return movementOffenseType; }
@@ -456,6 +538,7 @@ public class ConfigManager {
     public double getMeteorFlyMicrofallExpectedDelta() { return meteorFlyMicrofallExpectedDelta; }
     public double getMeteorFlyMicrofallTolerance() { return meteorFlyMicrofallTolerance; }
     public double getMeteorFlyMinVelocityToBypass() { return meteorFlyMinVelocityToBypass; }
+    public int getMeteorFlyMaceExemptTicks() { return meteorFlyMaceExemptTicks; }
     public int getMeteorFlyJoinGraceTicks() { return meteorFlyJoinGraceTicks; }
     public double getMeteorFlyJoinMaxFallDistance() { return meteorFlyJoinMaxFallDistance; }
     public double getMeteorFlyJoinFallDistanceBypass() { return meteorFlyJoinFallDistanceBypass; }
@@ -476,6 +559,29 @@ public class ConfigManager {
     public boolean isAntiVoidKickOnDetect() { return antiVoidKickOnDetect; }
     public String getAntiVoidKickReason() { return antiVoidKickReason; }
     public String getAntiVoidOffenseType() { return antiVoidOffenseType; }
+
+    // AntiAutoTotem check getters
+    public boolean isAntiAutoTotemEnabled() { return antiAutoTotemCheckEnabled; }
+    public boolean isAntiAutoTotemDebug() { return antiAutoTotemDebug; }
+    public int getAntiAutoTotemMinRefillTicks() { return antiAutoTotemMinRefillTicks; }
+    public int getAntiAutoTotemManualActionGraceTicks() { return antiAutoTotemManualActionGraceTicks; }
+    public int getAntiAutoTotemViolationThreshold() { return antiAutoTotemViolationThreshold; }
+    public boolean isAntiAutoTotemBanEnabled() { return antiAutoTotemBanEnabled; }
+    public boolean isAntiAutoTotemKickOnDetect() { return antiAutoTotemKickOnDetect; }
+    public String getAntiAutoTotemKickReason() { return antiAutoTotemKickReason; }
+    public String getAntiAutoTotemOffenseType() { return antiAutoTotemOffenseType; }
+
+    // AntiWindChargeJump check getters
+    public boolean isAntiWindChargeJumpEnabled() { return antiWindChargeJumpCheckEnabled; }
+    public boolean isAntiWindChargeJumpDebug() { return antiWindChargeJumpDebug; }
+    public double getAntiWindChargeJumpMinPitch() { return antiWindChargeJumpMinPitch; }
+    public double getAntiWindChargeJumpMaxHeightGain() { return antiWindChargeJumpMaxHeightGain; }
+    public int getAntiWindChargeJumpMaxSessionTicks() { return antiWindChargeJumpMaxSessionTicks; }
+    public int getAntiWindChargeJumpViolationThreshold() { return antiWindChargeJumpViolationThreshold; }
+    public boolean isAntiWindChargeJumpBanEnabled() { return antiWindChargeJumpBanEnabled; }
+    public boolean isAntiWindChargeJumpKickOnDetect() { return antiWindChargeJumpKickOnDetect; }
+    public String getAntiWindChargeJumpKickReason() { return antiWindChargeJumpKickReason; }
+    public String getAntiWindChargeJumpOffenseType() { return antiWindChargeJumpOffenseType; }
 
     // Speed check getters
     public boolean isSpeedCheckEnabled() { return speedCheckEnabled; }
