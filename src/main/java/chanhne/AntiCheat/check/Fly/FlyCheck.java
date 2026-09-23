@@ -1,11 +1,12 @@
 package chanhne.AntiCheat.check.Fly;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -29,7 +30,7 @@ public class FlyCheck implements Listener {
     private final TeleportFlyDetector teleportDetector;
     private final HoverFlyDetector hoverDetector;
 
-    public FlyCheck(AntiCheatPlugin plugin) {
+    public FlyCheck(Mainplugin plugin) {
         this.teleportDetector = new TeleportFlyDetector(plugin);
         this.hoverDetector = new HoverFlyDetector(plugin);
     }
@@ -60,5 +61,12 @@ public class FlyCheck implements Listener {
         Player player = event.getPlayer();
         hoverDetector.onQuit(player.getUniqueId());
         teleportDetector.onQuit(player.getUniqueId());
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (event.getDamager() instanceof Player attacker) {
+            hoverDetector.onPlayerAttack(attacker);
+        }
     }
 }

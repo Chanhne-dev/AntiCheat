@@ -1,6 +1,6 @@
 package chanhne.AntiCheat.check.TrouserStreak;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 import chanhne.AntiCheat.config.ConfigManager;
 import chanhne.AntiCheat.util.DetectionHelper;
 import org.bukkit.Material;
@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CrossbowMachineGunCheck implements Listener {
 
-    private final AntiCheatPlugin plugin;
+    private final Mainplugin plugin;
     private final Map<UUID, Long> lastShotMillis = new ConcurrentHashMap<>();
 
     private static final int BASE_CHARGE_TICKS = 25;
@@ -52,7 +52,7 @@ public class CrossbowMachineGunCheck implements Listener {
     // này là 1 loạt bắn duy nhất, không tính cooldown giữa chúng với nhau.
     private static final long SAME_VOLLEY_WINDOW_MILLIS = 150L; // ~3 tick
 
-    public CrossbowMachineGunCheck(AntiCheatPlugin plugin) {
+    public CrossbowMachineGunCheck(Mainplugin plugin) {
         this.plugin = plugin;
     }
 
@@ -95,9 +95,9 @@ public class CrossbowMachineGunCheck implements Listener {
     }
 
     private void flag(Player player, long actualIntervalMillis, long minIntervalMillis, ConfigManager cfg) {
-        DetectionHelper.log( plugin, cfg, "CROSSBOW MACHINE GUN PHÁT HIỆN (đã hủy phát bắn)", "Người chơi: " + player.getName() + " (" + player.getUniqueId() + ")", ">> Khoảng cách 2 phát: " + actualIntervalMillis + "ms", ">> Tối thiểu cần: " + minIntervalMillis + "ms");
-        DetectionHelper.notifyAdmins( plugin, cfg, "warning.crossbow-machinegun-detected", player.getName());
-        DetectionHelper.discord( plugin, "CrossbowMachineGun phát hiện (đã hủy phát bắn)", "Người chơi: " + player.getName() + "\nKhoảng cách 2 phát: " + actualIntervalMillis + "ms"    + "\nTối thiểu cần: " + minIntervalMillis + "ms", 0xE67E22);
-        DetectionHelper.kick( plugin, cfg, player.getUniqueId(), player.getName(), cfg.isCrossbowKickOnDetect(), cfg.getCrossbowKickReason(), "CrossbowMachineGun");
+        DetectionHelper.log(plugin, cfg, "CROSSBOW MACHINE GUN PHÁT HIỆN (đã hủy phát bắn)", "Người chơi: " + player.getName() + " (" + player.getUniqueId() + ")", ">> Khoảng cách 2 phát: " + actualIntervalMillis + "ms", ">> Tối thiểu cần: " + minIntervalMillis + "ms");
+        DetectionHelper.notifyAdmins(plugin, cfg, "warning.crossbow-machinegun-detected", player.getName());
+        DetectionHelper.discord(plugin, "CrossbowMachineGun phát hiện (đã hủy phát bắn)", "Người chơi: " + player.getName() + "\nKhoảng cách 2 phát: " + actualIntervalMillis + "ms"    + "\nTối thiểu cần: " + minIntervalMillis + "ms", 0xE67E22);
+        DetectionHelper.kick(plugin, cfg, player.getUniqueId(), player.getName(), cfg.isCrossbowKickOnDetect(), cfg.getCrossbowKickReason(), "CrossbowMachineGun");
     }
 }

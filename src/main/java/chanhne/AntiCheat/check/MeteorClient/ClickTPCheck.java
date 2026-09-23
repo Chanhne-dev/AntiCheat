@@ -1,6 +1,6 @@
 package chanhne.AntiCheat.check.MeteorClient;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 import chanhne.AntiCheat.config.ConfigManager;
 import chanhne.AntiCheat.messages.Message;
 
@@ -170,7 +170,7 @@ public class ClickTPCheck implements Listener {
     // server áp đặt lực) và Player#getVelocity() (dự phòng, tick sau).
     private static final long KNOCKBACK_GRACE_MS = 800;
 
-    private final AntiCheatPlugin plugin;
+    private final Mainplugin plugin;
     private final ConfigManager cfg;
 
     private final Map<UUID, Location> lastValidLocation = new ConcurrentHashMap<>();
@@ -185,7 +185,7 @@ public class ClickTPCheck implements Listener {
     // điểm bắt đầu chuỗi khi phát hiện vi phạm.
     private final Map<UUID, Deque<MoveRecord>> recentMoves = new ConcurrentHashMap<>();
 
-    public ClickTPCheck(AntiCheatPlugin plugin) {
+    public ClickTPCheck(Mainplugin plugin) {
         this.plugin = plugin;
         this.cfg = plugin.getConfigManager();
     }

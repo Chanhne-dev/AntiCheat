@@ -1,6 +1,6 @@
 package chanhne.AntiCheat.debug;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 import chanhne.AntiCheat.config.ConfigManager;
 
 import org.bukkit.Location;
@@ -75,7 +75,7 @@ public class MovementLogger implements Listener {
     private static final ZoneId ZONE = ZoneId.of("Asia/Ho_Chi_Minh");
     private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
-    private final AntiCheatPlugin plugin;
+    private final Mainplugin plugin;
     private final ConfigManager cfg;
 
     private final ConcurrentLinkedQueue<String> queue = new ConcurrentLinkedQueue<>();
@@ -85,7 +85,7 @@ public class MovementLogger implements Listener {
     private BufferedWriter writer;
     private final AtomicBoolean running = new AtomicBoolean(false);
 
-    public MovementLogger(AntiCheatPlugin plugin) {
+    public MovementLogger(Mainplugin plugin) {
         this.plugin = plugin;
         this.cfg = plugin.getConfigManager();
     }

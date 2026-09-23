@@ -6,16 +6,16 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.RayTraceResult;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 
 public class LineOfSightCheck {
 
-    private final AntiCheatPlugin plugin;
+    private final Mainplugin plugin;
 
     // Nên đồng bộ với ReachCheck
     private static final double MAX_DISTANCE = 5.2D;
 
-    public LineOfSightCheck(AntiCheatPlugin plugin) {
+    public LineOfSightCheck(Mainplugin plugin) {
         this.plugin = plugin;
     }
 

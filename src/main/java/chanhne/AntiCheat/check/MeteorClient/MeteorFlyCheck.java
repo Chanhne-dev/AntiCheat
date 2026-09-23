@@ -1,6 +1,6 @@
 // package chanhne.AntiCheat.check.MeteorClient;
 
-// import chanhne.AntiCheat.AntiCheatPlugin;
+// import chanhne.AntiCheat.Mainplugin;
 // import chanhne.AntiCheat.config.ConfigManager;
 // import chanhne.AntiCheat.util.DetectionHelper;
 // import chanhne.AntiCheat.util.ViolationTracker;
@@ -64,7 +64,7 @@
 //  */
 // public class MeteorFlyCheck implements Listener {
 
-//     private final AntiCheatPlugin plugin;
+//     private final Mainplugin plugin;
 //     private final ConfigManager config;
 //     private final ViolationTracker tracker = new ViolationTracker();
 //     private final Map<UUID, FlyState> states = new ConcurrentHashMap<>();
@@ -95,7 +95,7 @@
 //         }
 //     }
 
-//     public MeteorFlyCheck(AntiCheatPlugin plugin) {
+//     public MeteorFlyCheck(Mainplugin plugin) {
 //         this.plugin = plugin;
 //         this.config = plugin.getConfigManager();
 //     }

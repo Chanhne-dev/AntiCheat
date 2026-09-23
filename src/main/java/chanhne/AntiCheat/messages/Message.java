@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 import chanhne.AntiCheat.util.ColorUtil;
 
 import java.io.File;
@@ -18,11 +18,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public final class Message {
-    private static AntiCheatPlugin plugin;
+    private static Mainplugin plugin;
     private static final Map<String, Object> messages = new HashMap<>();
     private static final LegacyComponentSerializer LEGACY = LegacyComponentSerializer.legacyAmpersand();
 
-    public static void init(AntiCheatPlugin MainPlugin) {
+    public static void init(Mainplugin MainPlugin) {
         plugin = MainPlugin;
         loadMessages();
     }

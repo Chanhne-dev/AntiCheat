@@ -13,7 +13,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 import chanhne.AntiCheat.check.IllegalItem.EnforcementHandler;
 import chanhne.AntiCheat.check.IllegalItem.ViolationResult;
 import chanhne.AntiCheat.check.IllegalItem.ViolationType;
@@ -24,10 +24,10 @@ import java.util.Locale;
 
 public class PlayerInventoryListener implements Listener {
 
-    private final AntiCheatPlugin plugin;
+    private final Mainplugin plugin;
     private final EnforcementHandler enforcementHandler;
 
-    public PlayerInventoryListener(AntiCheatPlugin plugin) {
+    public PlayerInventoryListener(Mainplugin plugin) {
         this.plugin = plugin;
         this.enforcementHandler = new EnforcementHandler(plugin);
     }
@@ -65,15 +65,6 @@ public class PlayerInventoryListener implements Listener {
         if (plugin.shouldBypass(player)) {
             return;
         }
-
-        // Delay 20 tick để inventory load xong
-        // không hỗ trợ Folia
-        // plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-        //     List<ViolationResult> violations = plugin.getItemChecker().checkInventory(player);
-        //     if (!violations.isEmpty()) {
-        //         enforcementHandler.handleViolations(player, violations);
-        //     }
-        // }, 20L);
 
         // Hỗ trợ Folia
         player.getScheduler().runDelayed(plugin, task -> {

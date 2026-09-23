@@ -1,10 +1,11 @@
 package chanhne.AntiCheat.check.TrouserStreak;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 import chanhne.AntiCheat.config.ConfigManager;
 import chanhne.AntiCheat.util.DetectionHelper;
 import chanhne.AntiCheat.util.ViolationTracker;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -52,13 +53,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MaceKillCheck implements Listener {
 
-    private final AntiCheatPlugin plugin;
+    private final Mainplugin plugin;
     private final Map<UUID, Deque<Sample>> histories = new ConcurrentHashMap<>();
     private final ViolationTracker tracker = new ViolationTracker();
 
     private long globalTick = 0L;
 
-    public MaceKillCheck(AntiCheatPlugin plugin) {
+    public MaceKillCheck(Mainplugin plugin) {
         this.plugin = plugin;
     }
 
@@ -131,7 +132,8 @@ public class MaceKillCheck implements Listener {
         if (history == null || history.size() < 2) return;
 
         double oldestY = history.peekFirst().y;
-        double currentY = attacker.getLocation().getY();
+        Location loc = attacker.getLocation();
+        double currentY = loc.getY();
         double peakY = oldestY;
         for (Sample s : history) {
             if (s.y > peakY) peakY = s.y;

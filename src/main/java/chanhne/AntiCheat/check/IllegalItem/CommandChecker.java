@@ -7,13 +7,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 
 public class CommandChecker implements Listener {
 
-    private final AntiCheatPlugin plugin;
+    private final Mainplugin plugin;
 
-    public CommandChecker(AntiCheatPlugin plugin) {
+    public CommandChecker(Mainplugin plugin) {
         this.plugin = plugin;
     }
 

@@ -1,8 +1,10 @@
 package chanhne.AntiCheat.check.TrouserStreak;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 import chanhne.AntiCheat.config.ConfigManager;
 import chanhne.AntiCheat.util.DetectionHelper;
+
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -53,11 +55,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BetterScaffoldCheck implements Listener {
 
-    private final AntiCheatPlugin plugin;
+    private final Mainplugin plugin;
     private final Map<UUID, Deque<Long>> recentPlacements = new ConcurrentHashMap<>();
     private final Map<UUID, TowerState> towerStates = new ConcurrentHashMap<>();
 
-    public BetterScaffoldCheck(AntiCheatPlugin plugin) {
+    public BetterScaffoldCheck(Mainplugin plugin) {
         this.plugin = plugin;
     }
 
@@ -86,9 +88,10 @@ public class BetterScaffoldCheck implements Listener {
 
         // --- (B) Fast-tower: đặt block ngay dưới chân, nhịp nhanh liên tục ---
         Block placed = event.getBlockPlaced();
-        boolean isBelowFeet = placed.getX() == player.getLocation().getBlockX()
-                && placed.getZ() == player.getLocation().getBlockZ()
-                && placed.getY() == player.getLocation().getBlockY() - 1;
+        Location loc = player.getLocation();
+        boolean isBelowFeet = placed.getX() == loc.getBlockX()
+                && placed.getZ() == loc.getBlockZ()
+                && placed.getY() == loc.getBlockY() - 1;
 
         if (isBelowFeet) {
             TowerState state = towerStates.computeIfAbsent(player.getUniqueId(), k -> new TowerState());
@@ -116,11 +119,11 @@ public class BetterScaffoldCheck implements Listener {
     }
 
     private void flag(Player player, String signal, ConfigManager cfg, boolean kickOnBurst) {
-        DetectionHelper.log( plugin, cfg, "BETTERSCAFFOLD PHÁT HIỆN (đã hủy đặt block)", "Người chơi: " + player.getName() + " (" + player.getUniqueId() + ")", ">> Tín hiệu: " + signal);
-        DetectionHelper.notifyAdmins( plugin, cfg, "warning.scaffold-detected", player.getName());
-        DetectionHelper.discord( plugin, "BetterScaffold phát hiện (đã hủy đặt block)", "Người chơi: " + player.getName() + "\nTín hiệu: " + signal, 0xE67E22);
+        DetectionHelper.log(plugin, cfg, "BETTERSCAFFOLD PHÁT HIỆN (đã hủy đặt block)", "Người chơi: " + player.getName() + " (" + player.getUniqueId() + ")", ">> Tín hiệu: " + signal);
+        DetectionHelper.notifyAdmins(plugin, cfg, "warning.scaffold-detected", player.getName());
+        DetectionHelper.discord(plugin, "BetterScaffold phát hiện (đã hủy đặt block)", "Người chơi: " + player.getName() + "\nTín hiệu: " + signal, 0xE67E22);
         if (kickOnBurst) {
-            DetectionHelper.kick( plugin, cfg, player.getUniqueId(), player.getName(), cfg.isScaffoldKickOnBurst(), cfg.getScaffoldKickReason(), "BetterScaffold");
+            DetectionHelper.kick(plugin, cfg, player.getUniqueId(), player.getName(), cfg.isScaffoldKickOnBurst(), cfg.getScaffoldKickReason(), "BetterScaffold");
         }
     }
 

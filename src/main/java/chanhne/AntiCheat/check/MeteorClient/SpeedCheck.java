@@ -1,6 +1,6 @@
 // package chanhne.AntiCheat.check.MeteorClient;
 
-// import chanhne.AntiCheat.AntiCheatPlugin;
+// import chanhne.AntiCheat.Mainplugin;
 // import chanhne.AntiCheat.config.ConfigManager;
 // import org.bukkit.Location;
 // import org.bukkit.Material;
@@ -26,7 +26,7 @@
 
 // public class SpeedCheck implements Listener {
 
-//     private final AntiCheatPlugin plugin;
+//     private final Mainplugin plugin;
 //     private final ConfigManager config;
 
 //     private final Map<UUID, Long> frozenUntil = new ConcurrentHashMap<>();
@@ -45,7 +45,7 @@
 //     private final Map<UUID, Boolean> wasInWater = new ConcurrentHashMap<>();
 //     private final Map<UUID, Boolean> wasOnSoulSand = new ConcurrentHashMap<>();
 
-//     public SpeedCheck(AntiCheatPlugin plugin) {
+//     public SpeedCheck(Mainplugin plugin) {
 //         this.plugin = plugin;
 //         this.config = plugin.getConfigManager();
 //     }

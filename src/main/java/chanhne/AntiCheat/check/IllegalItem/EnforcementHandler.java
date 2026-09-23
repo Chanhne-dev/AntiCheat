@@ -3,20 +3,22 @@ package chanhne.AntiCheat.check.IllegalItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 import chanhne.AntiCheat.config.ConfigManager;
 import chanhne.AntiCheat.messages.Message;
-import chanhne.offplugin.api.ChanhOffAPI;
-import chanhne.offplugin.api.ChanhOffAPIProvider;
+import chanhne.AntiCheat.util.ViolationTracker;
+import dev.chanhne.betterban.api.ChanhOffAPI;
+import dev.chanhne.betterban.api.ChanhOffAPIProvider;
 import net.kyori.adventure.text.Component;
 
 import java.util.List;
 
 public class EnforcementHandler {
 
-    private final AntiCheatPlugin plugin;
+    private final Mainplugin plugin;
+    private final ViolationTracker tracker = new ViolationTracker();
 
-    public EnforcementHandler(AntiCheatPlugin plugin) {
+    public EnforcementHandler(Mainplugin plugin) {
         this.plugin = plugin;
     }
 
@@ -61,6 +63,7 @@ public class EnforcementHandler {
                 "player", player.getName(),
                 "item", first.getTargetName());
             for (Player admin : Bukkit.getOnlinePlayers()) {
+                if (admin == null) continue;
                 if (admin.hasPermission("anticheat.admin")) {
                     admin.sendMessage(comp);
                     if (violations.size() > 1) {
@@ -70,11 +73,19 @@ public class EnforcementHandler {
             }
         }
 
-        // 5. Ban player
-        ChanhOffAPI api = ChanhOffAPIProvider.get();
-
-        if (api != null) {
-            api.banPlayer(player.getUniqueId(), player.getName(), "IllegalItem", "AntiCheat");
+        // 5. Ban player - chỉ khi bật trong config VÀ đã đạt ngưỡng vi phạm,
+        // giống mọi module check khác (movement, mace, boat, fly...) - tránh
+        // 1 false positive từ ItemChecker (heuristic, ví dụ so tên "strong")
+        // dẫn tới ban ngay lập tức không thể tắt qua config.
+        if (cfg.isItemBanEnabled()) {
+            int count = tracker.increase(player.getUniqueId());
+            if (count >= cfg.getItemViolationThreshold()) {
+                ChanhOffAPI api = ChanhOffAPIProvider.get();
+                if (api != null) {
+                    api.banPlayer(player.getUniqueId(), player.getName(), "IllegalItem", "AntiCheat");
+                }
+                tracker.reset(player.getUniqueId());
+            }
         }
     }
 

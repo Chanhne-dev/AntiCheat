@@ -6,16 +6,16 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 import chanhne.AntiCheat.messages.Message;
 import chanhne.AntiCheat.task.ScanSession;
 
 
 public class CommandHandler implements CommandExecutor {
 
-    private final AntiCheatPlugin plugin;
+    private final Mainplugin plugin;
 
-    public CommandHandler(AntiCheatPlugin plugin) {
+    public CommandHandler(Mainplugin plugin) {
         this.plugin = plugin;
     }
 

@@ -13,18 +13,18 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.util.Vector;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 import chanhne.AntiCheat.check.TrouserStreak.LineOfSightCheck;
 
 public class BlockBreakListener implements Listener {
 
-    private final AntiCheatPlugin plugin;
+    private final Mainplugin plugin;
 
     private final LineOfSightCheck lineOfSightCheck;
     private static final double MAX_REACH = 5.2D;
     private static final double MIN_DOT = 0.94D;
 
-    public BlockBreakListener(AntiCheatPlugin plugin) {
+    public BlockBreakListener(Mainplugin plugin) {
         this.plugin = plugin;
         this.lineOfSightCheck = new LineOfSightCheck(plugin);
     }

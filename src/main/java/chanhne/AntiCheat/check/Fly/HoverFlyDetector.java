@@ -1,6 +1,6 @@
 package chanhne.AntiCheat.check.Fly;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 import chanhne.AntiCheat.config.ConfigManager;
 import chanhne.AntiCheat.util.DetectionHelper;
 import chanhne.AntiCheat.util.ViolationTracker;
@@ -50,7 +50,7 @@ import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
  */
 class HoverFlyDetector {
 
-    private final AntiCheatPlugin plugin;
+    private final Mainplugin plugin;
     private final ConfigManager config;
     private final ViolationTracker tracker = new ViolationTracker();
     private final Map<UUID, FlyState> states = new ConcurrentHashMap<>();
@@ -70,6 +70,10 @@ class HoverFlyDetector {
         boolean joinWindowClean = true;
         boolean joinWindowEvaluated = false;
 
+        // Số tick còn lại được miễn trừ do vừa đánh trúng bằng Mace (Wind Burst
+        // hất bay lên - cơ chế PvP hợp lệ của vanilla, không phải fly hack)
+        int maceExemptTicks = 0;
+
         void resetAll() {
             airTicks = 0;
             ascendStreak = 0;
@@ -79,7 +83,7 @@ class HoverFlyDetector {
         }
     }
 
-    HoverFlyDetector(AntiCheatPlugin plugin) {
+    HoverFlyDetector(Mainplugin plugin) {
         this.plugin = plugin;
         this.config = plugin.getConfigManager();
     }
@@ -90,6 +94,23 @@ class HoverFlyDetector {
 
     void onQuit(UUID uuid) {
         stopTracking(uuid);
+    }
+
+    /**
+     * Gọi khi player này vừa đánh trúng 1 entity. Nếu đang cầm Mace, cấp 1
+     * khoảng "ân hạn" ngắn để không tính vi phạm Ascend/Hover/MicroFall trong
+     * lúc đó - vì Mace (đặc biệt kèm enchant Wind Burst) hất chính người tấn
+     * công bay vọt lên để combo, đây là cơ chế PvP hợp lệ của vanilla 1.21,
+     * tạo ra delta Y dương rất lớn (quan sát thực tế ~1.9 block/tick) dễ trùng
+     * với pattern SustainedAscend nếu không loại trừ.
+     */
+    void onPlayerAttack(Player attacker) {
+        if (attacker.getInventory().getItemInMainHand().getType() != Material.MACE) return;
+
+        FlyState state = states.get(attacker.getUniqueId());
+        if (state == null) return;
+
+        state.maceExemptTicks = config.getMeteorFlyMaceExemptTicks();
     }
 
     private void startTracking(Player player) {
@@ -158,12 +179,14 @@ class HoverFlyDetector {
             return;
         }
 
-        boolean onGroundOrExempt = player.isOnGround() || isExempt(player);
+        boolean maceExempt = state.maceExemptTicks > 0;
+        if (maceExempt) state.maceExemptTicks--;
+        boolean onGroundOrExempt = player.isOnGround() || isExempt(player) || maceExempt;
 
         if (config.isMeteorFlyDebug()) {
             plugin.getLogger().info(String.format(
-                    "[MeteorFly-DEBUG] %s | Y=%.4f | onGround=%b | exempt=%b | joinTicks=%d | airTicks=%d | ascend=%d | hover=%d | microfall=%d",
-                    player.getName(), currentY, player.isOnGround(), isExempt(player),
+                    "[MeteorFly-DEBUG] %s | Y=%.4f | onGround=%b | exempt=%b | maceExempt=%b | joinTicks=%d | airTicks=%d | ascend=%d | hover=%d | microfall=%d",
+                    player.getName(), currentY, player.isOnGround(), isExempt(player), maceExempt,
                     state.ticksSinceJoin, state.airTicks, state.ascendStreak, state.hoverStreak, state.microFallStreak));
         }
 
@@ -325,7 +348,8 @@ class HoverFlyDetector {
     }
 
     private boolean isOnClimbable(Player player) {
-        Material type = player.getLocation().getBlock().getType();
+        Location loc = player.getLocation();
+        Material type = loc.getBlock().getType();
         switch (type) {
             case LADDER:
             case VINE:

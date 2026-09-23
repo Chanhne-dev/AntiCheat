@@ -1,6 +1,6 @@
 package chanhne.AntiCheat.check.TrouserStreak;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 import chanhne.AntiCheat.config.ConfigManager;
 import chanhne.AntiCheat.messages.Message;
 import chanhne.AntiCheat.util.DetectionHelper;
@@ -66,7 +66,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BoatNoclipCheck implements Listener {
 
-    private final AntiCheatPlugin plugin;
+    private final Mainplugin plugin;
     private final Map<UUID, StuckState> states = new ConcurrentHashMap<>();
     private final ViolationTracker tracker = new ViolationTracker();
     private final ViolationTracker freeBoatRideTracker = new ViolationTracker();
@@ -75,7 +75,7 @@ public class BoatNoclipCheck implements Listener {
     private static final double SAMPLE_HALF_WIDTH = 0.65;
     private static final double SAMPLE_HALF_HEIGHT = 0.3;
 
-    public BoatNoclipCheck(AntiCheatPlugin plugin) {
+    public BoatNoclipCheck(Mainplugin plugin) {
         this.plugin = plugin;
     }
 

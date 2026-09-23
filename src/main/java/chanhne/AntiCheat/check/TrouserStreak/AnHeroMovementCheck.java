@@ -1,6 +1,6 @@
 package chanhne.AntiCheat.check.TrouserStreak;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 import chanhne.AntiCheat.config.ConfigManager;
 import chanhne.AntiCheat.util.DetectionHelper;
 
@@ -12,9 +12,9 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Phát hiện pattern "AnHero" (client cheat): spam di chuyển Y lên bất thường
@@ -30,10 +30,10 @@ import java.util.UUID;
  */
 public class AnHeroMovementCheck implements Listener {
 
-    private final AntiCheatPlugin plugin;
-    private final Map<UUID, PlayerMovementState> states = new HashMap<>();
+    private final Mainplugin plugin;
+    private final Map<UUID, PlayerMovementState> states = new ConcurrentHashMap<>();
 
-    public AnHeroMovementCheck(AntiCheatPlugin plugin) {
+    public AnHeroMovementCheck(Mainplugin plugin) {
         this.plugin = plugin;
     }
 
@@ -105,13 +105,13 @@ public class AnHeroMovementCheck implements Listener {
         state.violations++;
         int violations = state.violations;
 
-        DetectionHelper.log( plugin, cfg, "DI CHUYỂN BẤT THƯỜNG (AnHero pattern)", "Người chơi: " + player.getName() + " (" + player.getUniqueId() + ")", ">> Vi phạm lần thứ " + violations);
-        DetectionHelper.notifyAdmins( plugin, cfg, "warning.movement-anomaly-detected", player.getName());
-        DetectionHelper.discord( plugin, "AnHero pattern phát hiện", "Người chơi: " + player.getName() + "\nVi phạm: " + violations, 0xE74C3C);
-        DetectionHelper.kick( plugin, cfg, player.getUniqueId(), player.getName(), cfg.isMovementKickOnDetect(), cfg.getMovementKickReason(), "AnHero");
+        DetectionHelper.log(plugin, cfg, "DI CHUYỂN BẤT THƯỜNG (AnHero pattern)", "Người chơi: " + player.getName() + " (" + player.getUniqueId() + ")", ">> Vi phạm lần thứ " + violations);
+        DetectionHelper.notifyAdmins(plugin, cfg, "warning.movement-anomaly-detected", player.getName());
+        DetectionHelper.discord(plugin, "AnHero pattern phát hiện", "Người chơi: " + player.getName() + "\nVi phạm: " + violations, 0xE74C3C);
+        DetectionHelper.kick(plugin, cfg, player.getUniqueId(), player.getName(), cfg.isMovementKickOnDetect(), cfg.getMovementKickReason(), "AnHero");
         if (violations >= cfg.getMovementViolationThreshold()) {
             state.violations = 0;
-            DetectionHelper.ban( plugin, cfg, player.getUniqueId(), player.getName(), cfg.isMovementBanEnabled(), cfg.getMovementOffenseType(), "AnHero", "warning.movement-anomaly-banned");
+            DetectionHelper.ban(plugin, cfg, player.getUniqueId(), player.getName(), cfg.isMovementBanEnabled(), cfg.getMovementOffenseType(), "AnHero", "warning.movement-anomaly-banned");
         }
     }
 

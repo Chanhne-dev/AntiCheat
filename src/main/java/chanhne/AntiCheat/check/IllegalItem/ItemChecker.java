@@ -9,7 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 import chanhne.AntiCheat.config.ConfigManager;
 
 import java.util.ArrayList;
@@ -19,10 +19,10 @@ import java.util.Map;
 
 public class ItemChecker {
 
-    private final AntiCheatPlugin plugin;
+    private final Mainplugin plugin;
     private ConfigManager cfg;
 
-    public ItemChecker(AntiCheatPlugin plugin) {
+    public ItemChecker(Mainplugin plugin) {
         this.plugin = plugin;
         this.cfg = plugin.getConfigManager();
         reload();

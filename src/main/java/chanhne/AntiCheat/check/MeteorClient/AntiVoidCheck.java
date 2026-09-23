@@ -1,6 +1,6 @@
 package chanhne.AntiCheat.check.MeteorClient;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 import chanhne.AntiCheat.config.ConfigManager;
 import chanhne.AntiCheat.util.DetectionHelper;
 import chanhne.AntiCheat.util.ViolationTracker;
@@ -10,6 +10,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -41,7 +42,7 @@ import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
  */
 public class AntiVoidCheck implements Listener {
 
-    private final AntiCheatPlugin plugin;
+    private final Mainplugin plugin;
     private final ConfigManager config;
     private final ViolationTracker tracker = new ViolationTracker();
     private final Map<UUID, VoidState> states = new ConcurrentHashMap<>();
@@ -62,7 +63,7 @@ public class AntiVoidCheck implements Listener {
         }
     }
 
-    public AntiVoidCheck(AntiCheatPlugin plugin) {
+    public AntiVoidCheck(Mainplugin plugin) {
         this.plugin = plugin;
         this.config = plugin.getConfigManager();
     }
@@ -116,7 +117,8 @@ public class AntiVoidCheck implements Listener {
         if (state == null) return;
 
         World world = player.getWorld();
-        double currentY = player.getLocation().getY();
+        Location loc = player.getLocation();
+        double currentY = loc.getY();
 
         // Chỉ quan tâm khi Y nằm trong khoảng gần đáy world (vùng "gần void") -
         // tính tương đối theo min-height của world để tự thích ứng mọi world

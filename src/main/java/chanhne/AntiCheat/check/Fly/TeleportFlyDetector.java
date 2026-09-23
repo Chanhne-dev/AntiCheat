@@ -1,6 +1,6 @@
 package chanhne.AntiCheat.check.Fly;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 import chanhne.AntiCheat.config.ConfigManager;
 import chanhne.AntiCheat.util.DetectionHelper;
 import chanhne.AntiCheat.util.ViolationTracker;
@@ -24,12 +24,12 @@ import org.bukkit.util.Vector;
  */
 class TeleportFlyDetector {
 
-    private final AntiCheatPlugin plugin;
+    private final Mainplugin plugin;
     private final ConfigManager config;
     private final ViolationTracker tracker = new ViolationTracker();
     private final Map<UUID, Boolean> previousOnGround = new ConcurrentHashMap<>();
 
-    TeleportFlyDetector(AntiCheatPlugin plugin) {
+    TeleportFlyDetector(Mainplugin plugin) {
         this.plugin = plugin;
         this.config = plugin.getConfigManager();
     }

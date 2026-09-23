@@ -8,14 +8,14 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-import chanhne.AntiCheat.AntiCheatPlugin;
+import chanhne.AntiCheat.Mainplugin;
 
 public class BlockPlaceListener implements Listener {
 
     private static final double MAX_REACH = 5.2D;
-    private final AntiCheatPlugin plugin;
+    private final Mainplugin plugin;
 
-    public BlockPlaceListener(AntiCheatPlugin plugin) {
+    public BlockPlaceListener(Mainplugin plugin) {
         this.plugin = plugin;
     }
 

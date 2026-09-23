@@ -1,6 +1,6 @@
 // package chanhne.AntiCheat.check.TrouserStreak;
 
-// import chanhne.AntiCheat.AntiCheatPlugin;
+// import chanhne.AntiCheat.Mainplugin;
 // import chanhne.AntiCheat.config.ConfigManager;
 // import chanhne.AntiCheat.util.DetectionHelper;
 // import chanhne.AntiCheat.util.ViolationTracker;
@@ -18,12 +18,12 @@
 
 // public class TPFlyCheck implements Listener {
 
-//     private final AntiCheatPlugin plugin;
+//     private final Mainplugin plugin;
 //     private final ConfigManager config;
 //     private final ViolationTracker tracker = new ViolationTracker();
 //     private final Map<UUID, Boolean> previousOnGround = new ConcurrentHashMap<>();
 
-//     public TPFlyCheck(AntiCheatPlugin plugin) {
+//     public TPFlyCheck(Mainplugin plugin) {
 //         this.plugin = plugin;
 //         this.config = plugin.getConfigManager();
 //     }
