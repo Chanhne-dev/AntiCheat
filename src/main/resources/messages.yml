@@ -40,3 +40,7 @@ warning:
     meteorfly-banned: "&eNgười chơi &f{player} &eđã bị ban do dùng Fly hack (Meteor Client)!"
     antivoid-detected: "&c⚠ Phát hiện nghi vấn AntiVoid (né sát thương void bất thường): &e{player}"
     antivoid-banned: "&eNgười chơi &f{player} &eđã bị ban do dùng AntiVoid (né sát thương void bất thường)!"
+    antiautototem-detected: "&c⚠ Phát hiện nghi vấn AutoTotem (refill totem bất thường): &e{player}"
+    antiautototem-banned: "&eNgười chơi &f{player} &eđã bị ban do dùng AutoTotem (refill totem bất thường)!"
+    antiwindchargejump-detected: "&c⚠ Phát hiện nghi vấn WindChargeJump (tự đẩy bay lên bất thường): &e{player}"
+    antiwindchargejump-banned: "&eNgười chơi &f{player} &eđã bị ban do dùng WindChargeJump (tự đẩy bay lên bất thường)!"

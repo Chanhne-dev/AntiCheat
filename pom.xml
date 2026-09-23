@@ -6,23 +6,23 @@
 
     <groupId>chanhne.AntiCheat</groupId>
     <artifactId>AntiCheat</artifactId>
-    <version>1.7.0</version>
+    <version>1.8.0</version>
     <packaging>jar</packaging>
 
     <name>AntiCheat</name>
-    <description>Tự động phát hiện và xóa các item bất hợp pháp trong Inventory. Support paper/folia</description>
+    <description>AntiCheat Sunflower. Support paper/folia</description>
 
     <properties>
-        <java.version>21</java.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <java.version>25</java.version>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <repositories>
         <repository>
             <id>papermc</id>
-            <url>https://repo.papermc.io/repository/maven-public/</url>
+            <url>https://artifactory.papermc.io/artifactory/releases/</url>
         </repository>
     </repositories>
 
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.21.1-R0.1-20250328.161643-128</version>
+            <version>26.1.2.build.74-stable</version>
             <scope>provided</scope>
         </dependency>
 
@@ -41,9 +41,9 @@
         </dependency>
 
         <dependency>
-            <groupId>chanhne</groupId>
-            <artifactId>chanhne-offplugin</artifactId>
-            <version>1.2.1</version>
+            <groupId>dev.chanhne.BetterBan</groupId>
+            <artifactId>BetterBan</artifactId>
+            <version>1.2.3</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

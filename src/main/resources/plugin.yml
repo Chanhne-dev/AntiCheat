@@ -1,11 +1,11 @@
 name: AntiCheat
 version: ${project.version}
-main: chanhne.AntiCheat.AntiCheatPlugin
+main: chanhne.AntiCheat.Mainplugin
 folia-supported: true
 api-version: '1.21'
 description: Tự động phát hiện và xóa các item bất hợp pháp trong Inventory. Support paper/folia
 author: Chanhne
-depend: [ChanhOffPlugin]        # bắt buộc phải có ChanhOffPlugin
+depend: [BetterBan]        # bắt buộc phải có BetterBan
 
 commands:
   anticheat:

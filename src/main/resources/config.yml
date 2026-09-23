@@ -8,6 +8,10 @@ settings:
     scan-interval: 40
     # Thời gian ban (phút)
     ban-duration-minutes: 1
+    # Có ban khi phát hiện item bất hợp pháp không (false = chỉ xóa item + cảnh báo)
+    item-ban-enabled: true
+    # Số lần vi phạm (item bất hợp pháp) liên tiếp trước khi ban
+    item-violation-threshold: 1
     # Ghi log ra console
     log-to-console: true
     # Thông báo cho admin khi phát hiện item bất hợp pháp
@@ -44,7 +48,7 @@ movement-check:
     kick-on-detect: true
     kick-reason: "Phát hiện di chuyển bất thường"
     # Key loại vi phạm dùng khi gọi banPlayer - PHẢI khai báo tương ứng
-    # trong offenses.yml của ChanhOffPlugin, nếu không ban sẽ thất bại
+    # trong offenses.yml của BetterBan, nếu không ban sẽ thất bại
     offense-type: "Blink"
 
 # ==========================================
@@ -74,7 +78,7 @@ mace-kill-check:
     kick-on-detect: true
     kick-reason: "Phát hiện MaceKill (spoof fall damage)"
     # Key loại vi phạm dùng khi gọi banPlayer - PHẢI khai báo tương ứng
-    # trong offenses.yml của ChanhOffPlugin, nếu không ban sẽ thất bại
+    # trong offenses.yml của BetterBan, nếu không ban sẽ thất bại
     offense-type: "KillAura"
 
 # ==========================================
@@ -95,7 +99,7 @@ boat-noclip-check:
     kick-on-detect: true
     kick-reason: "Phát hiện BoatNoclip (thuyền xuyên block)"
     # Key loại vi phạm dùng khi gọi banPlayer - PHẢI khai báo tương ứng
-    # trong offenses.yml của ChanhOffPlugin, nếu không ban sẽ thất bại
+    # trong offenses.yml của BetterBan, nếu không ban sẽ thất bại
     offense-type: "Blink"
 
     # ------------------------------------------------------------------
@@ -118,7 +122,7 @@ boat-noclip-check:
         violation-threshold: 1
         ban-enabled: false
         # PHẢI khai báo entry "Blink" trong offenses.yml của
-        # ChanhOffPlugin, nếu không ban sẽ thất bại
+        # BetterBan, nếu không ban sẽ thất bại
         offense-type: "Blink"
         # Tự động tách nạn nhân khỏi thuyền và dịch chuyển họ về đúng vị trí
         # ngay TRƯỚC cú kéo bất thường (an toàn, không phải void/khối đặc).
@@ -228,7 +232,7 @@ fly-check:
     debug: false
     # Bỏ qua vùng void kỹ thuật RẤT SÂU dưới ngưỡng này (nếu map bạn có khu vực
     # như vậy và không muốn check ở đó, ví dụ khu vực kỹ thuật/void dưới đáy).
-    # Mặc định -2032 (sát đáy world Paper) nên KHÔNG loại trừ khu vực chơi bình
+    # Mặc định -125 (sát đáy world Paper) nên KHÔNG loại trừ khu vực chơi bình
     # thường nào cả - check áp dụng ở TOÀN BỘ độ cao trừ khi bạn tự chỉnh lại.
     check-only-below-y: -125
     # Số tick "ân hạn" ngay sau khi rời mặt đất (đỉnh nhảy bình thường) trước khi
@@ -267,6 +271,11 @@ fly-check:
     # đó -> bỏ qua JoinHover hoàn toàn cho phiên này, tránh oan người chơi thật
     # vừa thoát game giữa lúc đang rơi rồi vào lại
     join-fall-distance-bypass: 3.0
+    # Số tick được miễn trừ Ascend/Hover/MicroFall ngay sau khi đánh trúng bằng
+    # Mace - cơ chế Wind Burst của Mace (vanilla 1.21) hất chính người tấn công
+    # bay vọt lên để combo, delta Y quan sát thực tế có thể lên tới ~1.9 block/
+    # tick, dễ trùng false-positive với SustainedAscend nếu không loại trừ
+    mace-exempt-ticks: 30
 
 # ==========================================
 # PHÁT HIỆN "ANTIVOID" (module tự "nảy" lại tránh rơi xuống void thay vì chết
@@ -297,6 +306,64 @@ antivoid-check:
   kick-on-detect: true
   kick-reason: "Phát hiện AntiVoid (né sát thương void bất thường)"
   offense-type: "AntiVoid"
+
+# ==========================================
+# PHÁT HIỆN "AUTOTOTEM" (tự động refill totem vào offhand ngay sau khi vừa
+# cứu mạng, nhanh hơn thời gian phản xạ người thật - kiểu module AutoTotem
+# của Meteor Client)
+# ==========================================
+antiautototem-check:
+  enabled: true
+  # Bật để in log chi tiết mỗi tick theo dõi sau khi totem cứu mạng - chỉ bật
+  # tạm thời khi cần debug
+  debug: false
+  # Nếu offhand có lại totem trong ÍT HƠN số tick này TÍNH TỪ LÚC TOTEM VỪA CỨU
+  # MẠNG (EntityResurrectEvent) thì coi là nghi vấn - lớp phòng thủ thứ 2, đề
+  # phòng cheat giả 1 cú click packet để lách qua check "không có thao tác tay"
+  min-refill-ticks: 3
+  # Cửa sổ "còn hợp lệ" (tick) sau 1 thao tác tay thật (nhấn F, click/kéo-thả
+  # trong inventory) - nếu totem xuất hiện trong offhand SAU khoảng này (không
+  # có thao tác tay nào gần đó) thì coi là tự động, nghi vấn ngay lập tức
+  manual-action-grace-ticks: 3
+  # Số lần vi phạm trước khi xử lý
+  violation-threshold: 2
+  ban-enabled: true
+  kick-on-detect: true
+  kick-reason: "Phát hiện AutoTotem (refill totem bất thường)"
+  offense-type: "AutoTotem"
+
+# ==========================================
+# PHÁT HIỆN "WINDCHARGEJUMP" (tự đẩy bay lên bất thường sau khi ném Wind Charge
+# xuống dưới chân - kiểu module WindChargeJump của NoraTweaks).
+# Dùng giới hạn VẬT LÝ CỨNG (độ cao thực đạt được) thay vì đoán "có vẻ máy móc
+# hay không" - đáng tin cậy hơn nhiều, không phụ thuộc thao tác tay nhanh/chậm.
+# ==========================================
+antiwindchargejump-check:
+  enabled: true
+  # Bật để in log chi tiết mỗi phiên bay (độ cao đạt được) - chỉ bật tạm thời
+  # khi cần debug/hiệu chỉnh ngưỡng
+  debug: false
+  # Chỉ tính nếu lúc ném đang nhìn xuống đủ dốc (độ, 0=ngang, 90=thẳng xuống) -
+  # đúng kiểu ném tự đẩy lên, tránh tính oan lúc ném ngang vào kẻ địch
+  min-pitch: 50.0
+  # Độ cao tối đa hợp lý (block) cho 1 phiên bay tự đẩy bằng Wind Charge - theo
+  # dữ liệu quan sát thực tế: người chơi thật đạt ~5 block, cheat đạt tới ~12
+  # block. Đặt cao hơn mức thật 1 chút để tránh oan người chơi giỏi/may mắn,
+  # vẫn đủ thấp để bắt được mức bất thường. Nhiều lần ném liên tiếp trong cùng
+  # 1 phiên (chưa kịp chạm đất) đều tính gộp, vì cheat có thể chồng nhiều vụ nổ
+  max-height-gain: 8.0
+  # Số tick tối đa theo dõi 1 phiên bay trước khi bỏ qua nếu chưa chạm đất trở
+  # lại (phòng trường hợp rơi xuống hố sâu/bơi - không đủ tin cậy để kết luận)
+  max-session-ticks: 100
+  # Số lần vi phạm trước khi xử lý - đây là giới hạn vật lý cứng nên 1 lần vượt
+  # ngưỡng đã là bằng chứng khá mạnh, không cần đợi lặp lại nhiều như check thống kê
+  violation-threshold: 1
+  # Mặc định TẮT xử lý tự động - dù đây là giới hạn vật lý đáng tin cậy hơn bản
+  # cũ, vẫn khuyến nghị quan sát log 1 thời gian trước khi bật kick/ban tự động
+  ban-enabled: false
+  kick-on-detect: false
+  kick-reason: "Phát hiện WindChargeJump (tự đẩy bay lên bất thường)"
+  offense-type: "WindChargeJump"
 
 # =========================================
 # PHÁT HIỆN "SPEED" (di chuyển vượt tốc độ cho phép)
@@ -408,6 +475,17 @@ max-potion-levels:
     # Level tối đa cho phép (level II = 1 trong API, level III = 2...)
     # 1 = Level I, 2 = Level II (amplifier 0 = lvl1, amplifier 1 = lvl2)
     max-amplifier: 1     # Cho phép tối đa Level II (amplifier 1)
+
+# =========================================
+# Chặn các command có thể bị lợi dụng để gian lận (ví dụ random_tick_speed, setblock, fill...
+# =========================================
+block-command:
+  enabled: true
+  commands:
+    - setblock
+    - fill
+    - clone
+    - summon
 
 # ==========================================
 # ITEM KHÔNG HỢP LỆ VỀ ENCHANTMENT
