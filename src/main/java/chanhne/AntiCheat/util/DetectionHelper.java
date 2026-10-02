@@ -2,15 +2,15 @@ package chanhne.AntiCheat.util;
 
 import java.util.UUID;
 
+import dev.chanhne.betterban.api.ChanhOffAPI;
+import dev.chanhne.betterban.api.ChanhOffAPIProvider;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import chanhne.AntiCheat.Mainplugin;
 import chanhne.AntiCheat.config.ConfigManager;
 import chanhne.AntiCheat.messages.Message;
-import dev.chanhne.betterban.api.ChanhOffAPI;
-import dev.chanhne.betterban.api.ChanhOffAPIProvider;
-import net.kyori.adventure.text.Component;
 
 public final class DetectionHelper {
 

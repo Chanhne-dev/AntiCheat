@@ -15,3 +15,38 @@ Lưu ý khi nâng cấp:
 - Config cũ dùng `anti:` sẽ KHÔNG còn được đọc. Cần đổi `anti:` thành
   `illegal-item:` trong config.yml đang chạy trên server (hoặc xóa file để
   plugin tạo lại bản mặc định).
+
+------------------------------------------------------------
+
+[Bảo mật] Chặn PlugMan thao tác lên plugin AntiCheat
+- Thêm listener PlugManProtectListener: hủy lệnh PlugMan nhắm vào AntiCheat,
+  áp dụng cho cả người chơi (PlayerCommandPreprocessEvent) và console/RCON
+  (ServerCommandEvent).
+- Chặn khi: <plugman|plm> <unload|reload|disable|restart> <AntiCheat|*|all>.
+  Hỗ trợ cả dạng có namespace (plugman:plugman) và không phân biệt hoa thường.
+- Khi bị chặn: gửi thông báo cho người gõ lệnh và ghi cảnh báo ra console
+  (nếu illegal-item.settings.log-to-console = true).
+- Thêm mục cấu hình plugman-protect (enabled, commands, actions) trong config.yml.
+
+File thay đổi:
+- src/main/java/chanhne/AntiCheat/listener/PlugManProtectListener.java (mới)
+- src/main/java/chanhne/AntiCheat/Mainplugin.java (đăng ký listener)
+- src/main/java/chanhne/AntiCheat/config/ConfigManager.java (đọc plugman-protect)
+- src/main/resources/config.yml (thêm plugman-protect)
+
+Lưu ý:
+- Không có ngoại lệ cho quyền anticheat.admin: admin/OP cũng bị chặn.
+- Chỉ chặn được lệnh gõ qua chat/console. Việc xóa/ghi đè file .jar hoặc dùng
+  plugin quản lý khác (không qua lệnh PlugMan) không nằm trong phạm vi này.
+
+------------------------------------------------------------
+
+[Code style] Sắp xếp lại import toàn bộ file .java
+- Thứ tự nhóm: java.* -> javax.* -> thư viện ngoài (dev, io, net, org...) -> chanhne.*
+  Mỗi nhóm cách nhau 1 dòng trống, trong nhóm xếp theo bảng chữ cái.
+- Import bị comment (module đang tắt như TPFly, MeteorFly, Speed, EspCulling)
+  cũng được xếp theo cùng quy tắc.
+- Không thêm/xóa/đổi import nào, chỉ đổi thứ tự. Không có import thừa bị phát hiện.
+- Giữ nguyên kiểu xuống dòng (CRLF/LF) của từng file.
+
+Có 30 file bị đổi thứ tự import (xem danh sách trong commit).

@@ -578,3 +578,19 @@ block-command:
     - fill
     - clone
     - summon
+
+# =========================================
+# Chặn PlugMan thao tác lên plugin AntiCheat (áp dụng cho cả người chơi lẫn console)
+# Lệnh bị chặn khi: <lệnh> <hành động> <AntiCheat | * | all>
+# Ví dụ: /plugman unload AntiCheat, /plm reload *
+# =========================================
+plugman-protect:
+  enabled: true
+  commands:
+    - plugman
+    - plm
+  actions:
+    - unload
+    - reload
+    - disable
+    - restart

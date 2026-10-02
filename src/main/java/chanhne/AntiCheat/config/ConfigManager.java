@@ -212,6 +212,9 @@ public class ConfigManager {
     // block-command check
     private boolean blockCommandEnabled;
     private Set<String> blockedCommands;
+    private boolean plugmanProtectEnabled;
+    private Set<String> plugmanCommands;
+    private Set<String> plugmanActions;
 
     public ConfigManager(Mainplugin plugin) {
         this.plugin = plugin;
@@ -269,6 +272,20 @@ public class ConfigManager {
             if (!normalized.isEmpty()) {
                 blockedCommands.add(normalized);
             }
+        }
+
+        // Load plugman-protect
+        plugmanProtectEnabled = config.getBoolean("plugman-protect.enabled", true);
+        plugmanCommands = new HashSet<>();
+        for (String c : config.getStringList("plugman-protect.commands")) {
+            String n = c.trim().toLowerCase(Locale.ROOT);
+            if (n.startsWith("/")) n = n.substring(1);
+            if (!n.isEmpty()) plugmanCommands.add(n);
+        }
+        plugmanActions = new HashSet<>();
+        for (String a : config.getStringList("plugman-protect.actions")) {
+            String n = a.trim().toLowerCase(Locale.ROOT);
+            if (!n.isEmpty()) plugmanActions.add(n);
         }
 
         // Load settings
@@ -493,6 +510,9 @@ public class ConfigManager {
     public boolean isLogToConsole() { return logToConsole; }
     public boolean isNotifyAdmins() { return notifyAdmins; }
     public boolean isBlockCommandEnabled() { return blockCommandEnabled; }
+    public boolean isPlugmanProtectEnabled() { return plugmanProtectEnabled; }
+    public Set<String> getPlugmanCommands() { return plugmanCommands; }
+    public Set<String> getPlugmanActions() { return plugmanActions; }
     public String getPrefix() { return prefix; }
 
     // Movement (AnHero pattern) check getters

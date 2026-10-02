@@ -9,23 +9,23 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import chanhne.AntiCheat.check.TrouserStreak.AnHeroMovementCheck;
-import chanhne.AntiCheat.check.TrouserStreak.BetterScaffoldCheck;
-// import chanhne.AntiCheat.check.TrouserStreak.TPFlyCheck;
-import chanhne.AntiCheat.check.TrouserStreak.BoatNoclipCheck;
-import chanhne.AntiCheat.check.TrouserStreak.CrossbowMachineGunCheck;
-import chanhne.AntiCheat.check.TrouserStreak.MaceKillCheck;
+// import chanhne.AntiCheat.check.EspCulling.EspCullingCheck;
+import chanhne.AntiCheat.check.Fly.FlyCheck;
+import chanhne.AntiCheat.check.IllegalItem.CommandChecker;
+import chanhne.AntiCheat.check.IllegalItem.EnforcementHandler;
+import chanhne.AntiCheat.check.IllegalItem.ItemChecker;
 import chanhne.AntiCheat.check.MeteorClient.AntiAutoTotemCheck;
 import chanhne.AntiCheat.check.MeteorClient.AntiVoidCheck;
 import chanhne.AntiCheat.check.MeteorClient.ClickTPCheck;
 // import chanhne.AntiCheat.check.MeteorClient.MeteorFlyCheck;
-import chanhne.AntiCheat.check.Fly.FlyCheck;
-import chanhne.AntiCheat.check.NoraTweaks.AntiWindChargeJumpCheck;
 // import chanhne.AntiCheat.check.MeteorClient.SpeedCheck;
-import chanhne.AntiCheat.check.IllegalItem.CommandChecker;
-import chanhne.AntiCheat.check.IllegalItem.EnforcementHandler;
-import chanhne.AntiCheat.check.IllegalItem.ItemChecker;
-// import chanhne.AntiCheat.check.EspCulling.EspCullingCheck;
+import chanhne.AntiCheat.check.NoraTweaks.AntiWindChargeJumpCheck;
+import chanhne.AntiCheat.check.TrouserStreak.AnHeroMovementCheck;
+import chanhne.AntiCheat.check.TrouserStreak.BetterScaffoldCheck;
+import chanhne.AntiCheat.check.TrouserStreak.BoatNoclipCheck;
+import chanhne.AntiCheat.check.TrouserStreak.CrossbowMachineGunCheck;
+import chanhne.AntiCheat.check.TrouserStreak.MaceKillCheck;
+// import chanhne.AntiCheat.check.TrouserStreak.TPFlyCheck;
 import chanhne.AntiCheat.command.CommandHandler;
 import chanhne.AntiCheat.config.ConfigManager;
 import chanhne.AntiCheat.debug.MovementLogger;
@@ -34,6 +34,7 @@ import chanhne.AntiCheat.listener.AntiCheatListener;
 import chanhne.AntiCheat.listener.BlockBreakListener;
 import chanhne.AntiCheat.listener.BlockPlaceListener;
 import chanhne.AntiCheat.listener.PlayerInventoryListener;
+import chanhne.AntiCheat.listener.PlugManProtectListener;
 import chanhne.AntiCheat.messages.Message;
 import chanhne.AntiCheat.task.ScanTask;
 
@@ -72,6 +73,7 @@ public class Mainplugin extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new BlockPlaceListener(this), this);
         Bukkit.getPluginManager().registerEvents(new PlayerInventoryListener(this), this);
         Bukkit.getPluginManager().registerEvents(new AntiCheatListener(this), this);
+        Bukkit.getPluginManager().registerEvents(new PlugManProtectListener(this), this);
 
         // Đăng ký các checkers
         Bukkit.getPluginManager().registerEvents(new CommandChecker(this), this);
