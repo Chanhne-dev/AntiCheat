@@ -25,6 +25,7 @@ import chanhne.AntiCheat.check.NoraTweaks.AntiWindChargeJumpCheck;
 import chanhne.AntiCheat.check.IllegalItem.CommandChecker;
 import chanhne.AntiCheat.check.IllegalItem.EnforcementHandler;
 import chanhne.AntiCheat.check.IllegalItem.ItemChecker;
+// import chanhne.AntiCheat.check.EspCulling.EspCullingCheck;
 import chanhne.AntiCheat.command.CommandHandler;
 import chanhne.AntiCheat.config.ConfigManager;
 import chanhne.AntiCheat.debug.MovementLogger;
@@ -48,6 +49,7 @@ public class Mainplugin extends JavaPlugin {
     private DiscordWebhook discordWebhook;
     private EnforcementHandler enforcementHandler;
     private MovementLogger movementLogger;
+    // private EspCullingCheck espCullingCheck;
 
     @Override
     public void onEnable() {
@@ -101,6 +103,10 @@ public class Mainplugin extends JavaPlugin {
 
         Bukkit.getPluginManager().registerEvents(new AntiWindChargeJumpCheck(this), this);
 
+        // espCullingCheck = new EspCullingCheck(this);
+        // Bukkit.getPluginManager().registerEvents(espCullingCheck, this);
+        // espCullingCheck.startForOnlinePlayers();
+
         // Đăng ký lệnh
         PluginCommand anticheatCommand = getCommand("anticheat");
         if (anticheatCommand != null) {
@@ -128,6 +134,10 @@ public class Mainplugin extends JavaPlugin {
         if (movementLogger != null) {
             movementLogger.stop();
         }
+
+        // if (espCullingCheck != null) {
+        //     espCullingCheck.stopAll();
+        // }
         getLogger().info("Mainplugin đã tắt.");
     }
 
@@ -144,6 +154,11 @@ public class Mainplugin extends JavaPlugin {
             movementLogger.stop();
             movementLogger.start();
         }
+
+        // if (espCullingCheck != null) {
+        //     espCullingCheck.stopAll();
+        //     espCullingCheck.startForOnlinePlayers();
+        // }
     }
 
     public boolean shouldBypass(Player player) {

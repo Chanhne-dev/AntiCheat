@@ -1,0 +1,17 @@
+CẬP NHẬT - 03/10/2026
+
+[Config] Gộp và đổi tên nhóm cấu hình item bất hợp pháp
+- Đổi nhóm `anti` thành `illegal-item` (khớp với package check.IllegalItem).
+- Nhóm `illegal-item` gồm: settings, banned-items, max-enchant-levels,
+  max-potion-levels, invalid-enchant-items.
+- Cập nhật tiêu đề comment trong config.yml.
+
+File thay đổi:
+- src/main/resources/config.yml
+- src/main/java/chanhne/AntiCheat/config/ConfigManager.java
+  (đường dẫn đọc config: anti.* -> illegal-item.*)
+
+Lưu ý khi nâng cấp:
+- Config cũ dùng `anti:` sẽ KHÔNG còn được đọc. Cần đổi `anti:` thành
+  `illegal-item:` trong config.yml đang chạy trên server (hoặc xóa file để
+  plugin tạo lại bản mặc định).

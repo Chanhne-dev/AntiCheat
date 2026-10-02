@@ -3,19 +3,130 @@
 #     Tương thích: Minecraft 1.21.x (Paper/Spigot)
 # ==========================================
 
-settings:
-    # Tần suất quét inventory (đơn vị: tick, 20 tick = 1 giây)
-    scan-interval: 40
-    # Thời gian ban (phút)
-    ban-duration-minutes: 1
-    # Có ban khi phát hiện item bất hợp pháp không (false = chỉ xóa item + cảnh báo)
-    item-ban-enabled: true
-    # Số lần vi phạm (item bất hợp pháp) liên tiếp trước khi ban
-    item-violation-threshold: 1
-    # Ghi log ra console
-    log-to-console: true
-    # Thông báo cho admin khi phát hiện item bất hợp pháp
-    notify-admins: true
+# ==========================================
+# NHÓM ILLEGAL-ITEM: quét item, ban/kick item, enchant, potion
+# ==========================================
+illegal-item:
+    settings:
+        # Tần suất quét inventory (đơn vị: tick, 20 tick = 1 giây)
+        scan-interval: 40
+        # Thời gian ban (phút)
+        ban-duration-minutes: 1
+        # Có ban khi phát hiện item bất hợp pháp không (false = chỉ xóa item + cảnh báo)
+        item-ban-enabled: true
+        # Số lần vi phạm (item bất hợp pháp) liên tiếp trước khi ban
+        item-violation-threshold: 1
+        # Ghi log ra console
+        log-to-console: true
+        # Thông báo cho admin khi phát hiện item bất hợp pháp
+        notify-admins: true
+
+    # DANH SÁCH ITEM BỊ CẤM HOÀN TOÀN
+    banned-items:
+        - SPAWNER_EGG                # Tất cả spawn egg (dùng endsWith)
+        - COMMAND_BLOCK
+        - BARRIER
+        - BEDROCK
+        - STRUCTURE_BLOCK
+        - END_PORTAL_FRAME
+        - CHAIN_COMMAND_BLOCK
+        - REPEATING_COMMAND_BLOCK
+        - TRIAL_SPAWNER
+        - KNOWLEDGE_BOOK
+        - BUDDING_AMETHYST
+        - STRUCTURE_VOID
+        - LIGHT
+        - DEBUG_STICK
+        - JIGSAW
+        - PETRIFIED_OAK_SLAB
+        - INFESTED_STONE
+        - INFESTED_COBBLESTONE
+        - INFESTED_STONE_BRICKS
+        - INFESTED_MOSSY_STONE_BRICKS
+        - INFESTED_CRACKED_STONE_BRICKS
+        - INFESTED_CHISELED_STONE_BRICKS
+
+    # GIỚI HẠN CẤP ĐỘ ENCHANTMENT (level tối đa cho phép)
+    max-enchant-levels:
+        # Bảo vệ
+        PROTECTION: 4
+        FIRE_PROTECTION: 4
+        BLAST_PROTECTION: 4
+        PROJECTILE_PROTECTION: 4
+        FEATHER_FALLING: 4
+        # Vũ khí
+        SHARPNESS: 5
+        SMITE: 5
+        BANE_OF_ARTHROPODS: 5
+        KNOCKBACK: 2
+        FIRE_ASPECT: 2
+        LOOTING: 3
+        SWEEPING_EDGE: 3
+        # Công cụ
+        EFFICIENCY: 5
+        SILK_TOUCH: 1
+        FORTUNE: 3
+        # Cung
+        POWER: 5
+        PUNCH: 2
+        FLAME: 1
+        INFINITY: 1
+        # Câu cá
+        LUCK_OF_THE_SEA: 3
+        LURE: 3
+        # Khác
+        UNBREAKING: 3
+        MENDING: 1
+        THORNS: 3
+        DEPTH_STRIDER: 3
+        FROST_WALKER: 2
+        BINDING_CURSE: 1
+        VANISHING_CURSE: 1
+        SOUL_SPEED: 3
+        SWIFT_SNEAK: 3
+        WIND_BURST: 3
+        DENSITY: 5
+        BREACH: 4
+        CHANNELING: 1
+        IMPALING: 5
+        LOYALTY: 3
+        RIPTIDE: 3
+        MULTISHOT: 1
+        PIERCING: 4
+        QUICK_CHARGE: 3
+
+    # GIỚI HẠN CẤP ĐỘ THUỐC (Potion Effects)
+    max-potion-levels:
+        # Level tối đa cho phép (level II = 1 trong API, level III = 2...)
+        # 1 = Level I, 2 = Level II (amplifier 0 = lvl1, amplifier 1 = lvl2)
+        max-amplifier: 1     # Cho phép tối đa Level II (amplifier 1)
+
+    # ITEM KHÔNG HỢP LỆ VỀ ENCHANTMENT
+    # (Các item không thể enchant trong vanilla nhưng bị exploit)
+    invalid-enchant-items:
+        # Khối tự nhiên không thể có enchant
+        - GRASS_BLOCK
+        - DIRT
+        - SAND
+        - GRAVEL
+        - STONE
+        - COBBLESTONE
+        - WOOD
+        - OAK_LOG
+        - BIRCH_LOG
+        - SPRUCE_LOG
+        - JUNGLE_LOG
+        - ACACIA_LOG
+        - DARK_OAK_LOG
+        - GLASS
+        - GLASS_PANE
+        - LEAVES
+        - OAK_LEAVES
+        - BIRCH_LEAVES
+        - SPRUCE_LEAVES
+        - JUNGLE_LEAVES
+        - ACACIA_LEAVES
+        - DARK_OAK_LEAVES
 
 discord:
   enabled: true
@@ -391,90 +502,71 @@ speed-check:
   offense-type: "Speed"
 
 # ==========================================
-# DANH SÁCH ITEM BỊ CẤM HOÀN TOÀN
+#
+# ĐANG PHÁT TRIỂN
+#
 # ==========================================
-banned-items:
-    - SPAWNER_EGG                # Tất cả spawn egg (dùng endsWith)
-    - COMMAND_BLOCK
-    - BARRIER
-    - BEDROCK
-    - STRUCTURE_BLOCK
-    - END_PORTAL_FRAME
-    - CHAIN_COMMAND_BLOCK
-    - REPEATING_COMMAND_BLOCK
-    - TRIAL_SPAWNER
-    - KNOWLEDGE_BOOK
-    - BUDDING_AMETHYST
-    - STRUCTURE_VOID
-    - LIGHT
-    - DEBUG_STICK
-    - JIGSAW
-    - PETRIFIED_OAK_SLAB
-    - INFESTED_STONE
-    - INFESTED_COBBLESTONE
-    - INFESTED_STONE_BRICKS
-    - INFESTED_MOSSY_STONE_BRICKS
-    - INFESTED_CRACKED_STONE_BRICKS
-    - INFESTED_CHISELED_STONE_BRICKS
-
+# ẨN ESP (KHÔNG PHẢI DETECTOR - đây là biện pháp NGĂN ESP ở tầng server:
+# client sẽ không nhận được packet entity cho những player mà người chơi
+# thật sự không nhìn thấy được do vật cản, nên client không có dữ liệu để
+# vẽ ESP ra, bất kể client cheat gì)
 # ==========================================
-# GIỚI HẠN CẤP ĐỘ ENCHANTMENT (level tối đa cho phép)
-# ==========================================
-max-enchant-levels:
-    # Bảo vệ
-    PROTECTION: 4
-    FIRE_PROTECTION: 4
-    BLAST_PROTECTION: 4
-    PROJECTILE_PROTECTION: 4
-    FEATHER_FALLING: 4
-    # Vũ khí
-    SHARPNESS: 5
-    SMITE: 5
-    BANE_OF_ARTHROPODS: 5
-    KNOCKBACK: 2
-    FIRE_ASPECT: 2
-    LOOTING: 3
-    SWEEPING_EDGE: 3
-    # Công cụ
-    EFFICIENCY: 5
-    SILK_TOUCH: 1
-    FORTUNE: 3
-    # Cung
-    POWER: 5
-    PUNCH: 2
-    FLAME: 1
-    INFINITY: 1
-    # Câu cá
-    LUCK_OF_THE_SEA: 3
-    LURE: 3
-    # Khác
-    UNBREAKING: 3
-    MENDING: 1
-    THORNS: 3
-    DEPTH_STRIDER: 3
-    FROST_WALKER: 2
-    BINDING_CURSE: 1
-    VANISHING_CURSE: 1
-    SOUL_SPEED: 3
-    SWIFT_SNEAK: 3
-    WIND_BURST: 3
-    DENSITY: 5
-    BREACH: 4
-    CHANNELING: 1
-    IMPALING: 5
-    LOYALTY: 3
-    RIPTIDE: 3
-    MULTISHOT: 1
-    PIERCING: 4
-    QUICK_CHARGE: 3
-
-# ==========================================
-# GIỚI HẠN CẤP ĐỘ THUỐC (Potion Effects)
-# ==========================================
-max-potion-levels:
-    # Level tối đa cho phép (level II = 1 trong API, level III = 2...)
-    # 1 = Level I, 2 = Level II (amplifier 0 = lvl1, amplifier 1 = lvl2)
-    max-amplifier: 1     # Cho phép tối đa Level II (amplifier 1)
+esp-culling-check:
+  enabled: false
+  # Bán kính theo dõi quanh mỗi người chơi (block). Nên <= view-distance * 16.
+  scan-radius: 48.0
+  # Khoảng cách tối thiểu LUÔN hiện player khác bất kể line-of-sight, để
+  # tránh giật/flicker khi combat cự ly gần (đứng sát tường lúc đánh nhau)
+  min-cull-distance: 6.0
+  # Chu kỳ quét lại line-of-sight cho mỗi người chơi (tick). 4 = 5 lần/giây.
+  # Tăng giá trị này nếu cần giảm tải TPS trên server đông người.
+  scan-period-ticks: 4
+  # Ẩn TUYỆT ĐỐI player đang ở Y < hide-below-y khỏi những viewer đang ở
+  # Y >= hide-below-y - bất kể line-of-sight hay khoảng cách (ưu tiên cao
+  # nhất, kể cả trong min-cull-distance). Dùng để tránh lộ vị trí người
+  # đang đào hầm/ở dưới lòng đất cho người đang ở trên mặt đất.
+  # (CHỈ áp dụng cho việc ẩn PLAYER - phần ẩn BLOCK bên dưới dùng
+  # y-reveal-radius-tiers riêng, không phụ thuộc 2 giá trị này.)
+  hide-below-y-enabled: true
+  hide-below-y: 20.0
+  # Ẩn CẢ BLOCK (không chỉ player, kể cả AIR - để không lộ hình dạng hang)
+  # cho RIÊNG viewer đó (block thật trong world không đổi). Dùng
+  # Player#sendBlockChanges (Paper) - không phải ProtocolLib - vì đây là API
+  # chính thức, ổn định cho đúng việc này.
+  block-hide-enabled: true
+  # Bán kính QUẢN LÝ tối đa quanh viewer (đơn vị: chunk) - phạm vi xa nhất
+  # còn được theo dõi/ẩn; ngoài phạm vi này coi như không quản lý (giữ hiệu
+  # năng, tránh quét quá rộng). Các radius trong y-reveal-radius-tiers bên
+  # dưới không có tác dụng vượt quá giá trị này.
+  block-hide-chunk-radius: 3
+  # Ranh giới dọc CỐ ĐỊNH: chỉ block ở Y < giá trị này mới thuộc diện có thể
+  # bị ẩn. Block ở Y >= giá trị này LUÔN gửi thật, KHÔNG điều kiện gì cả -
+  # độc lập hoàn toàn với các mốc trong y-reveal-radius-tiers bên dưới (mốc
+  # đó chỉ quyết định BÁN KÍNH NGANG theo Y hiện tại của viewer, không quyết
+  # định ranh giới dọc này).
+  block-hide-y-ceiling: 20.0
+  # Số block TỐI ĐA được gửi cho 1 viewer mỗi tick (mặc định 512).
+  # Mỗi chunk solid có ~1000-3000 block cần ẩn. Nếu gửi tất cả cùng lúc sẽ
+  # block EntityScheduler → keepalive timeout. Giá trị này rải đều việc gửi
+  # ra nhiều tick: 512 block/tick = ~4-6 tick để ẩn 1 chunk, đủ nhanh để
+  # chống X-ray mà không gây lag. Tăng nếu muốn ẩn nhanh hơn (cẩn thận với
+  # server nhiều người chơi), giảm nếu vẫn thấy lag.
+  max-blocks-per-tick: 512
+  # Bán kính chunk HIỆN THẬT quanh viewer theo Y hiện tại. Định dạng: "Y:radius"
+  # (0=1x1, 1=3x3, 2=5x5, 3=7x7...). Trên mốc cao nhất: ẩn hết, kể cả
+  # chunk đang đứng. Đi ngược lên: tự co lại theo mốc tương ứng.
+  #   Y=40 → 1x1 (chỉ chunk đang đứng, radius=0)
+  #   Y=30 → 9 chunks = 3x3 (radius=1)
+  #   Y=20 → 12 chunks tầm nhìn tối đa của server
+  #           Paper view-distance thường là 10 chunk = 21x21, nhưng giá trị
+  #           này là số VÒNG quanh tâm. 12 chunk radius = 25x25 vùng - chỉnh
+  #           theo view-distance thực tế của server bạn.
+  y-reveal-radius-tiers:
+    - "40:0"
+    - "30:1"
+    - "20:12"
+  # Block SOLID → AIR cho viewer đang bị ẩn. Block AIR thật (hang, hầm) giữ
+  # nguyên - client vẫn thấy đúng hình dạng không gian trống.
 
 # =========================================
 # Chặn các command có thể bị lợi dụng để gian lận (ví dụ random_tick_speed, setblock, fill...
@@ -486,32 +578,3 @@ block-command:
     - fill
     - clone
     - summon
-
-# ==========================================
-# ITEM KHÔNG HỢP LỆ VỀ ENCHANTMENT
-# (Các item không thể enchant trong vanilla nhưng bị exploit)
-# ==========================================
-invalid-enchant-items:
-    # Khối tự nhiên không thể có enchant
-    - GRASS_BLOCK
-    - DIRT
-    - SAND
-    - GRAVEL
-    - STONE
-    - COBBLESTONE
-    - WOOD
-    - OAK_LOG
-    - BIRCH_LOG
-    - SPRUCE_LOG
-    - JUNGLE_LOG
-    - ACACIA_LOG
-    - DARK_OAK_LOG
-    - GLASS
-    - GLASS_PANE
-    - LEAVES
-    - OAK_LEAVES
-    - BIRCH_LEAVES
-    - SPRUCE_LEAVES
-    - JUNGLE_LEAVES
-    - ACACIA_LEAVES
-    - DARK_OAK_LEAVES

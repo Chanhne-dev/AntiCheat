@@ -182,6 +182,33 @@ public class ConfigManager {
     private String speedKickReason;
     private String speedOffenseType;
 
+    // Esp-culling check (KHÔNG phải detector - module NGĂN ESP ở tầng server
+    // bằng cách ẩn packet entity của player ngoài line-of-sight)
+    private boolean espCullingCheckEnabled;
+    private double espCullingScanRadius;
+    private double espCullingMinCullDistance;
+    private int espCullingScanPeriodTicks;
+    private boolean espCullingHideBelowYEnabled;
+    private double espCullingHideBelowY;
+    private boolean espCullingBlockHideEnabled;
+    private int espCullingBlockHideChunkRadius;
+    private List<YRadiusTier> espCullingYRadiusTiers;
+    // Ranh giới dọc CỐ ĐỊNH: chỉ block ở Y < giá trị này mới thuộc diện có
+    // thể bị ẩn. Block ở Y >= giá trị này LUÔN gửi bình thường (không điều
+    // kiện gì cả) - độc lập với các mốc trong y-reveal-radius-tiers (mốc đó
+    // chỉ quyết định bán kính NGANG, không quyết định ranh giới dọc).
+    private double espCullingBlockHideCeilingY;
+    private int espCullingMaxBlocksPerTick;
+
+    /**
+     * 1 mốc trong bảng "bán kính chunk THẬT quanh viewer theo Y hiện tại":
+     * một khi viewer.getY() &lt;= thresholdY, radius (đơn vị: vòng chunk,
+     * 0=1x1, 1=3x3, 2=5x5...) này được áp dụng - cho tới khi gặp mốc nhỏ hơn
+     * tiếp theo mà viewer cũng đã xuống tới. -1 (dùng làm baseline khi viewer
+     * ở trên MỌI mốc) nghĩa là chưa hiện gì cả, kể cả chunk viewer đang đứng.
+     */
+    public record YRadiusTier(double thresholdY, int radius) {}
+
     // block-command check
     private boolean blockCommandEnabled;
     private Set<String> blockedCommands;
@@ -200,16 +227,16 @@ public class ConfigManager {
 
         // Load banned items
         bannedItems = new HashSet<>();
-        List<String> bannedList = config.getStringList("banned-items");
+        List<String> bannedList = config.getStringList("illegal-item.banned-items");
         for (String item : bannedList) {
             bannedItems.add(item.toUpperCase());
         }
 
         // Load max enchant levels
         maxEnchantLevels = new HashMap<>();
-        if (config.isConfigurationSection("max-enchant-levels")) {
-            for (String key : config.getConfigurationSection("max-enchant-levels").getKeys(false)) {
-                int level = config.getInt("max-enchant-levels." + key, 0);
+        if (config.isConfigurationSection("illegal-item.max-enchant-levels")) {
+            for (String key : config.getConfigurationSection("illegal-item.max-enchant-levels").getKeys(false)) {
+                int level = config.getInt("illegal-item.max-enchant-levels." + key, 0);
                 try {
                     Enchantment ench = getEnchantmentByName(key);
                     if (ench != null) {
@@ -223,7 +250,7 @@ public class ConfigManager {
 
         // Load invalid enchant items
         invalidEnchantItems = new HashSet<>();
-        List<String> invalidList = config.getStringList("invalid-enchant-items");
+        List<String> invalidList = config.getStringList("illegal-item.invalid-enchant-items");
         for (String item : invalidList) {
             invalidEnchantItems.add(item.toUpperCase());
         }
@@ -245,13 +272,13 @@ public class ConfigManager {
         }
 
         // Load settings
-        maxPotionAmplifier = config.getInt("max-potion-levels.max-amplifier", 1);
-        scanInterval = config.getInt("settings.scan-interval", 40);
-        banDurationMinutes = config.getInt("settings.ban-duration-minutes", 1);
-        itemBanEnabled = config.getBoolean("settings.item-ban-enabled", true);
-        itemViolationThreshold = config.getInt("settings.item-violation-threshold", 1);
-        logToConsole = config.getBoolean("settings.log-to-console", true);
-        notifyAdmins = config.getBoolean("settings.notify-admins", true);
+        maxPotionAmplifier = config.getInt("illegal-item.max-potion-levels.max-amplifier", 1);
+        scanInterval = config.getInt("illegal-item.settings.scan-interval", 40);
+        banDurationMinutes = config.getInt("illegal-item.settings.ban-duration-minutes", 1);
+        itemBanEnabled = config.getBoolean("illegal-item.settings.item-ban-enabled", true);
+        itemViolationThreshold = config.getInt("illegal-item.settings.item-violation-threshold", 1);
+        logToConsole = config.getBoolean("illegal-item.settings.log-to-console", true);
+        notifyAdmins = config.getBoolean("illegal-item.settings.notify-admins", true);
         prefix = Message.get("prefix");
 
         // Movement (AnHero pattern) check settings
@@ -412,6 +439,35 @@ public class ConfigManager {
         speedKickOnDetect = config.getBoolean("speed-check.kick-on-detect", true);
         speedKickReason = config.getString("speed-check.kick-reason", "Phát hiện Speed hack");
         speedOffenseType = config.getString("speed-check.offense-type", "Speed");
+
+        espCullingCheckEnabled = config.getBoolean("esp-culling-check.enabled", true);
+        espCullingScanRadius = config.getDouble("esp-culling-check.scan-radius", 48.0);
+        espCullingMinCullDistance = config.getDouble("esp-culling-check.min-cull-distance", 6.0);
+        espCullingScanPeriodTicks = config.getInt("esp-culling-check.scan-period-ticks", 4);
+        espCullingHideBelowYEnabled = config.getBoolean("esp-culling-check.hide-below-y-enabled", true);
+        espCullingHideBelowY = config.getDouble("esp-culling-check.hide-below-y", 20.0);
+        espCullingBlockHideEnabled = config.getBoolean("esp-culling-check.block-hide-enabled", true);
+        espCullingBlockHideChunkRadius = config.getInt("esp-culling-check.block-hide-chunk-radius", 3);
+
+        List<YRadiusTier> parsedTiers = new ArrayList<>();
+        for (String raw : config.getStringList("esp-culling-check.y-reveal-radius-tiers")) {
+            String[] parts = raw.split(":");
+            if (parts.length != 2) continue;
+            try {
+                double thresholdY = Double.parseDouble(parts[0].trim());
+                int radius = Integer.parseInt(parts[1].trim());
+                parsedTiers.add(new YRadiusTier(thresholdY, radius));
+            } catch (NumberFormatException e) {
+                // dòng cấu hình sai định dạng "Y:radius" - bỏ qua, không crash cả plugin
+            }
+        }
+        // Giảm dần theo Y - viewer.getY() <= mốc nào thì mốc đó (và mọi mốc
+        // nhỏ hơn viewer đã xuống qua) sẽ lần lượt ghi đè, mốc nhỏ nhất thắng.
+        parsedTiers.sort((a, b) -> Double.compare(b.thresholdY(), a.thresholdY()));
+        espCullingYRadiusTiers = List.copyOf(parsedTiers);
+
+        espCullingBlockHideCeilingY = config.getDouble("esp-culling-check.block-hide-y-ceiling", 20.0);
+        espCullingMaxBlocksPerTick = config.getInt("esp-culling-check.max-blocks-per-tick", 512);
     }
 
     private Enchantment getEnchantmentByName(String name) {
@@ -593,4 +649,21 @@ public class ConfigManager {
     public boolean isSpeedKickOnDetect() { return speedKickOnDetect; }
     public String getSpeedKickReason() { return speedKickReason; }
     public String getSpeedOffenseType() { return speedOffenseType; }
+
+    // block packing / ESP culling check getters
+    // public boolean isEspCullingCheckEnabled() { return espCullingCheckEnabled; }
+    // public double getEspCullingScanRadius() { return espCullingScanRadius; }
+    // public double getEspCullingMinCullDistance() { return espCullingMinCullDistance; }
+    // public int getEspCullingScanPeriodTicks() { return espCullingScanPeriodTicks; }
+    // public boolean isEspCullingHideBelowYEnabled() { return espCullingHideBelowYEnabled; }
+    // public double getEspCullingHideBelowY() { return espCullingHideBelowY; }
+    // // Alias - tên khác cho cùng 2 giá trị trên, để khớp với code đang gọi
+    // // isEspCullingHideUndergroundEnabled()/getEspCullingUndergroundYThreshold().
+    // public boolean isEspCullingHideUndergroundEnabled() { return espCullingHideBelowYEnabled; }
+    // public double getEspCullingUndergroundYThreshold() { return espCullingHideBelowY; }
+    // public boolean isEspCullingBlockHideEnabled() { return espCullingBlockHideEnabled; }
+    // public int getEspCullingBlockHideChunkRadius() { return espCullingBlockHideChunkRadius; }
+    // public List<YRadiusTier> getEspCullingYRadiusTiers() { return espCullingYRadiusTiers; }
+    // public double getEspCullingBlockHideCeilingY() { return espCullingBlockHideCeilingY; }
+    // public int getEspCullingMaxBlocksPerTick() { return espCullingMaxBlocksPerTick; }
 }

@@ -1,2 +1,9 @@
+# IDE settings
 .vscode/
+*.zip
+
+# Maven
 target/
+
+# đang phát triển
+EspCulling/
